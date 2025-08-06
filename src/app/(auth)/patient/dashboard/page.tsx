@@ -13,7 +13,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { QRCodeCanvas } from "qrcode.react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { useRef, useState } from "react";
 
 const demoAppointments = [
     { id: 1, doctor: 'Dr. Demo', specialization: 'Cardiologist', date: '2024-08-15', time: '10:30 AM', status: 'Confirmed' },
@@ -36,22 +35,6 @@ const patientData = {
 const qrString = `Full Name: ${patientData.fullName}\nAge: ${patientData.age}\nGender: ${patientData.gender}\nBlood Group: ${patientData.bloodGroup}\nContact Number: ${patientData.contactNumber}\nEmail ID: ${patientData.email}\nAddress: ${patientData.address}\nPatient ID: ${patientData.patientId}`;
 const [qrOpen, setQrOpen] = useState(false);
 const [copied, setCopied] = useState(false);
-const qrRef = useRef<HTMLDivElement>(null);
-const handleDownloadQR = () => {
-  const canvas = (qrRef.current?.querySelector('canvas')) as HTMLCanvasElement | null;
-  if (canvas) {
-    const url = canvas.toDataURL("image/png");
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `patient-profile-qr.png`;
-    a.click();
-  }
-};
-const handleCopyData = async () => {
-  await navigator.clipboard.writeText(qrString);
-  setCopied(true);
-  setTimeout(() => setCopied(false), 1500);
-};
 
 export default function PatientDashboard() {
     const [upcomingAppointments, setUpcomingAppointments] = useState<typeof demoAppointments>([]);
