@@ -120,11 +120,13 @@ Open [http://localhost:9002](http://localhost:9002) to view the application.
 ### Appointment Booking
 ![Appointment Booking](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/appoinment-booking.png)
 
-### Patient Portal
-![Patient Portal](https://via.placeholder.com/800x400/4CAF50/FFFFFF?text=Patient+Health+Portal)
-
 ### Doctor Dashboard
-![Doctor Dashboard](https://via.placeholder.com/800x400/FF9800/FFFFFF?text=Doctor+Management+Panel)
+![Doctor Dashboard](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/doctor-dashboard.png)
+
+### Patient Portal
+![Patient Portal](### Doctor Dashboard
+![Doctor Dashboard](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/patient.png)
+)
 
 ## 🔧 Installation
 
