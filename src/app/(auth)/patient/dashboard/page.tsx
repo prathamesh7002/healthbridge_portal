@@ -32,7 +32,7 @@ const patientData = {
   address: "123 Main St, Springfield, USA",
   patientId: "PAT005",
 };
-const qrString = `Full Name: ${patientData.fullName}\nAge: ${patientData.age}\nGender: ${patientData.gender}\nBlood Group: ${patientData.bloodGroup}\nContact Number: ${patientData.contactNumber}\nEmail ID: ${patientData.email}\nAddress: ${patientData.address}\nPatient ID: ${patientData.patientId}`;
+const qrString = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/patient/summary/${patientData.patientId}`;
 
 export default function PatientDashboard() {
     const [qrOpen, setQrOpen] = useState(false);
