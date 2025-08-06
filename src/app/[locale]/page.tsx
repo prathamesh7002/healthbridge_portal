@@ -28,7 +28,7 @@ export default function LoginPage() {
       </div>
       <div className="hidden bg-muted lg:block relative">
         <Image
-          src="https://placehold.co/1200x1920.png"
+          src="/main-img"
           alt="A doctor attending a patient"
           data-ai-hint="medical professional future"
           fill
