@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { StatCard } from '@/components/shared/stat-card';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +13,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { QRCodeCanvas } from "qrcode.react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { useRef, useState } from "react";
 
 const demoAppointments = [
     { id: 1, doctor: 'Dr. Demo', specialization: 'Cardiologist', date: '2024-08-15', time: '10:30 AM', status: 'Confirmed' },

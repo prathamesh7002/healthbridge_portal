@@ -28,7 +28,7 @@ export default function LoginPage() {
       <div 
         className="hidden bg-muted lg:block relative"
         style={{
-          backgroundImage: 'url(https://healthbridge-port.netlify.app/main-img.png)',
+          backgroundImage: 'url(/main-img.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
