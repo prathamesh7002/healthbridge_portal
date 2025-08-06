@@ -7,9 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { ArrowUpRight, CalendarClock, Pill, FilePlus, PlusCircle } from 'lucide-react';
+import { ArrowUpRight, CalendarClock, Pill, FilePlus, PlusCircle, QrCode, Download, Copy as CopyIcon, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { QRCodeCanvas } from "qrcode.react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { useRef, useState } from "react";
 
 const demoAppointments = [
     { id: 1, doctor: 'Dr. Demo', specialization: 'Cardiologist', date: '2024-08-15', time: '10:30 AM', status: 'Confirmed' },
@@ -18,6 +22,36 @@ const demoAppointments = [
 const demoPrescriptions = [
     { id: 1, doctor: 'Dr. Demo', date: '2024-07-20', details: 'Atorvastatin 20mg' },
 ];
+
+const patientData = {
+  fullName: "John Doe",
+  age: 39,
+  gender: "Male",
+  bloodGroup: "O+",
+  contactNumber: "123-456-7890",
+  email: "john.doe@example.com",
+  address: "123 Main St, Springfield, USA",
+  patientId: "PAT005",
+};
+const qrString = `Full Name: ${patientData.fullName}\nAge: ${patientData.age}\nGender: ${patientData.gender}\nBlood Group: ${patientData.bloodGroup}\nContact Number: ${patientData.contactNumber}\nEmail ID: ${patientData.email}\nAddress: ${patientData.address}\nPatient ID: ${patientData.patientId}`;
+const [qrOpen, setQrOpen] = useState(false);
+const [copied, setCopied] = useState(false);
+const qrRef = useRef<HTMLDivElement>(null);
+const handleDownloadQR = () => {
+  const canvas = (qrRef.current?.querySelector('canvas')) as HTMLCanvasElement | null;
+  if (canvas) {
+    const url = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `patient-profile-qr.png`;
+    a.click();
+  }
+};
+const handleCopyData = async () => {
+  await navigator.clipboard.writeText(qrString);
+  setCopied(true);
+  setTimeout(() => setCopied(false), 1500);
+};
 
 export default function PatientDashboard() {
     const [upcomingAppointments, setUpcomingAppointments] = useState<typeof demoAppointments>([]);
