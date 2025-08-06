@@ -115,10 +115,10 @@ Open [http://localhost:9002](http://localhost:9002) to view the application.
 ## 📸 Screenshots
 
 ### Dashboard Overview
-![Dashboard](https://via.placeholder.com/800x400/3F51B5/FFFFFF?text=HealthBridge+Dashboard)
+![Dashboard](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/dashboard.png)
 
 ### Appointment Booking
-![Appointment Booking](https://via.placeholder.com/800x400/7E57C2/FFFFFF?text=Smart+Appointment+Booking)
+![Appointment Booking](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/appoinment-booking.png)
 
 ### Patient Portal
 ![Patient Portal](https://via.placeholder.com/800x400/4CAF50/FFFFFF?text=Patient+Health+Portal)
