@@ -7,7 +7,7 @@ export default function SignupPage() {
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2 bg-background">
       <div className="hidden bg-muted lg:block relative">
         <Image
-          src="https://placehold.co/1080x1920.png"
+          src="/main.png"
           alt="A modern hospital hallway"
           data-ai-hint="hospital hallway"
           fill
