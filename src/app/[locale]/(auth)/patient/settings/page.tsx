@@ -1,3 +1,5 @@
+'use client';
+
 import { SettingsForm } from "@/components/shared/settings-form";
 import { Separator } from "@/components/ui/separator";
 import { useTranslations } from "next-intl";

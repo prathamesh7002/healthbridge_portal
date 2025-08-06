@@ -1,3 +1,5 @@
+'use client';
+
 import { SignupForm } from '@/components/auth/signup-form';
 import Image from 'next/image';
 import { HeartPulse } from 'lucide-react';
