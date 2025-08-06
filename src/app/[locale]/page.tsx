@@ -4,6 +4,7 @@ import { LoginForm } from '@/components/auth/login-form';
 import Image from 'next/image';
 import { HeartPulse } from 'lucide-react';
 import {useTranslations} from 'next-intl';
+import mainImg from '../../../public/main-img.png';
 
 export default function LoginPage() {
   const t = useTranslations('LoginPage');
@@ -27,11 +28,9 @@ export default function LoginPage() {
         </div>
       </div>
       <div className="hidden bg-muted lg:block relative">
-        <Image
+        <img
           src="/main-img.png"
           alt="A doctor attending a patient"
-          data-ai-hint="medical professional future"
-          fill
           className="h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
