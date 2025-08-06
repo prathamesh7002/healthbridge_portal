@@ -28,7 +28,7 @@ export default function LoginPage() {
       </div>
       <div className="hidden bg-muted lg:block relative">
         <Image
-          src="/main-img"
+          src="/main-img.png"
           alt="A doctor attending a patient"
           data-ai-hint="medical professional future"
           fill
