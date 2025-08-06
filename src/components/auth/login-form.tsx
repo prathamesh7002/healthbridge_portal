@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,6 +33,7 @@ const demoUsers = {
 
 export function LoginForm() {
   const router = useRouter();
+  const locale = useLocale();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const t = useTranslations('LoginForm');
@@ -71,7 +73,7 @@ export function LoginForm() {
           title: tToast("loginSuccessTitle"),
           description: tToast("loginSuccessDescription"),
         });
-        router.push(`/${data.role}/dashboard`);
+        router.push(`/${locale}/${data.role}/dashboard`);
         router.refresh();
       } else {
          toast({
