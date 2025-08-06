@@ -33,10 +33,10 @@ const patientData = {
   patientId: "PAT005",
 };
 const qrString = `Full Name: ${patientData.fullName}\nAge: ${patientData.age}\nGender: ${patientData.gender}\nBlood Group: ${patientData.bloodGroup}\nContact Number: ${patientData.contactNumber}\nEmail ID: ${patientData.email}\nAddress: ${patientData.address}\nPatient ID: ${patientData.patientId}`;
-const [qrOpen, setQrOpen] = useState(false);
-const [copied, setCopied] = useState(false);
 
 export default function PatientDashboard() {
+    const [qrOpen, setQrOpen] = useState(false);
+    const [copied, setCopied] = useState(false);
     const [upcomingAppointments, setUpcomingAppointments] = useState<typeof demoAppointments>([]);
     const [recentPrescriptions, setRecentPrescriptions] = useState<typeof demoPrescriptions>([]);
     const [isClient, setIsClient] = useState(false);
