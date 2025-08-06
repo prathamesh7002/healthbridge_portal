@@ -1,0 +1,139 @@
+
+{
+  "LoginPage": {
+    "title": "HealthBridge",
+    "subtitle": "Your partner in health. Welcome back.",
+    "forgotPassword": "Forgot your password?",
+    "login": "Login",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up"
+  },
+  "SignupPage": {
+    "title": "Join HealthBridge",
+    "subtitle": "Create an account to manage your health journey.",
+    "createAccount": "Create Account",
+    "haveAccount": "Already have an account?",
+    "login": "Login"
+  },
+  "LoginForm": {
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "roleLabel": "Role",
+    "rolePlaceholder": "Select your role",
+    "patient": "Patient",
+    "doctor": "Doctor",
+    "admin": "Admin"
+  },
+  "SignupForm": {
+    "fullNameLabel": "Full Name",
+    "fullNamePlaceholder": "John Doe",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "roleLabel": "I am a...",
+    "rolePlaceholder": "Select your role",
+    "patient": "Patient",
+    "doctor": "Doctor"
+  },
+  "Toasts": {
+    "loginSuccessTitle": "Login Successful",
+    "loginSuccessDescription": "Welcome back! Redirecting you to your dashboard.",
+    "invalidCredentialsTitle": "Invalid Credentials",
+    "invalidCredentialsDescription": "The email or password you entered is incorrect. Please try again.",
+    "accountCreatedTitle": "Account Created!",
+    "accountCreatedDescription": "Welcome to HealthBridge. Please log in to continue."
+  },
+  "Header": {
+    "myAccount": "My Account",
+    "profile": "Profile",
+    "settings": "Settings",
+    "support": "Support",
+    "logout": "Logout"
+  },
+  "Sidebar": {
+    "appName": "HealthBridge",
+    "logout": "Logout",
+    "patientNav": {
+        "dashboard": "Dashboard",
+        "bookAppointment": "Book Appointment",
+        "myReports": "My Reports",
+        "prescriptions": "Prescriptions",
+        "profile": "Profile",
+        "settings": "Settings"
+    },
+    "doctorNav": {
+        "dashboard": "Dashboard",
+        "appointments": "Appointments",
+        "myPatients": "My Patients",
+        "availability": "Availability",
+        "profile": "Profile",
+        "settings": "Settings"
+    },
+    "adminNav": {
+        "dashboard": "Dashboard",
+        "manageDoctors": "Manage Doctors",
+        "managePatients": "Manage Patients",
+        "profile": "Profile",
+        "settings": "Settings"
+    }
+  },
+  "SettingsPage": {
+    "title": "Settings",
+    "profileDescription": "Manage your account, notification, and privacy settings.",
+    "clinicDescription": "Configure global settings for the HealthBridge platform.",
+    "doctorDescription": "Manage your account, notification, and professional profile settings."
+  },
+  "SettingsForm": {
+      "appearanceTitle": "Appearance",
+      "appearanceDescription": "Customize the look and feel of the application.",
+      "themeLabel": "Theme",
+      "themeDescription": "Select the theme for the dashboard.",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System",
+      "languageLabel": "Language",
+      "languageDescription": "Select the language for the dashboard.",
+      "english": "English",
+      "hindi": "Hindi",
+      "marathi": "Marathi",
+      "profileTitle": "Profile",
+      "profileDescription": "This is how others will see you on the site.",
+      "fullNameLabel": "Full Name",
+      "fullNamePlaceholder": "Your name",
+      "emailLabel": "Email",
+      "emailPlaceholder": "your.email@example.com",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "e.g., (123) 456-7890",
+      "updateProfile": "Update Profile",
+      "notificationsTitle": "Notifications",
+      "notificationsDescription": "Manage your email notification preferences.",
+      "communicationEmailsLabel": "Communication emails",
+      "communicationEmailsDescription": "Receive emails about appointments and health records.",
+      "marketingEmailsLabel": "Marketing emails",
+      "marketingEmailsDescription": "Receive emails about new products, features, and special offers.",
+      "securityEmailsLabel": "Security emails",
+      "securityEmailsDescription": "Receive emails about your account security.",
+      "updateNotifications": "Update Notifications",
+      "profileUpdated": "Profile Updated",
+      "profileUpdatedDesc": "Your profile information has been successfully updated.",
+      "notificationsUpdated": "Notifications Updated",
+      "notificationsUpdatedDesc": "Your notification preferences have been saved.",
+      "themeUpdated": "Theme Updated",
+      "themeUpdatedDesc": "Switched to {theme} theme.",
+      "languageUpdated": "Language Updated",
+      "languageUpdatedDesc": "Switched to {language} language."
+  },
+  "PageTitles": {
+      "dashboard": "Dashboard",
+      "appointments": "Appointments",
+      "reports": "My Reports",
+      "prescriptions": "Prescriptions",
+      "profile": "Profile",
+      "settings": "Settings",
+      "availability": "Availability",
+      "patients": "My Patients",
+      "doctors": "Manage Doctors",
+      "managePatients": "Manage Patients"
+  }
+}

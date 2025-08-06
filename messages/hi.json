@@ -1,0 +1,139 @@
+
+{
+  "LoginPage": {
+    "title": "हेल्थब्रिज",
+    "subtitle": "स्वास्थ्य में आपका साथी। वापस स्वागत है।",
+    "forgotPassword": "अपना पासवर्ड भूल गए?",
+    "login": "लॉग इन करें",
+    "noAccount": "खाता नहीं है?",
+    "signUp": "साइन अप करें"
+  },
+  "SignupPage": {
+    "title": "हेल्थब्रिज से जुड़ें",
+    "subtitle": "अपनी स्वास्थ्य यात्रा का प्रबंधन करने के लिए एक खाता बनाएं।",
+    "createAccount": "खाता बनाएं",
+    "haveAccount": "पहले से ही एक खाता है?",
+    "login": "लॉग इन करें"
+  },
+  "LoginForm": {
+    "emailLabel": "ईमेल",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "पासवर्ड",
+    "roleLabel": "भूमिका",
+    "rolePlaceholder": "अपनी भूमिका चुनें",
+    "patient": "मरीज़",
+    "doctor": "डॉक्टर",
+    "admin": "व्यवस्थापक"
+  },
+  "SignupForm": {
+    "fullNameLabel": "पूरा नाम",
+    "fullNamePlaceholder": "जॉन डो",
+    "emailLabel": "ईमेल",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "पासवर्ड",
+    "roleLabel": "मैं एक...",
+    "rolePlaceholder": "अपनी भूमिका चुनें",
+    "patient": "मरीज़",
+    "doctor": "डॉक्टर"
+  },
+  "Toasts": {
+    "loginSuccessTitle": "लॉगिन सफल",
+    "loginSuccessDescription": "वापस स्वागत है! आपको आपके डैशबोर्ड पर रीडायरेक्ट किया जा रहा है।",
+    "invalidCredentialsTitle": "अमान्य क्रेडेंशियल",
+    "invalidCredentialsDescription": "आपके द्वारा दर्ज किया गया ईमेल या पासवर्ड गलत है। कृपया पुनः प्रयास करें।",
+    "accountCreatedTitle": "खाता बन गया!",
+    "accountCreatedDescription": "हेल्थब्रिज में आपका स्वागत है। जारी रखने के लिए कृपया लॉग इन करें।"
+  },
+  "Header": {
+    "myAccount": "मेरा खाता",
+    "profile": "प्रोफ़ाइल",
+    "settings": "सेटिंग्स",
+    "support": "सहायता",
+    "logout": "लॉग आउट"
+  },
+  "Sidebar": {
+    "appName": "हेल्थब्रिज",
+    "logout": "लॉग आउट",
+    "patientNav": {
+        "dashboard": "डैशबोर्ड",
+        "bookAppointment": "अपॉइंटमेंट बुक करें",
+        "myReports": "मेरी रिपोर्ट",
+        "prescriptions": "पर्चे",
+        "profile": "प्रोफ़ाइल",
+        "settings": "सेटिंग्स"
+    },
+    "doctorNav": {
+        "dashboard": "डैशबोर्ड",
+        "appointments": "अपॉइंटमेंट्स",
+        "myPatients": "मेरे मरीज़",
+        "availability": "उपलब्धता",
+        "profile": "प्रोफ़ाइल",
+        "settings": "सेटिंग्स"
+    },
+    "adminNav": {
+        "dashboard": "डैशबोर्ड",
+        "manageDoctors": "डॉक्टरों का प्रबंधन करें",
+        "managePatients": "मरीजों का प्रबंधन करें",
+        "profile": "प्रोफ़ाइल",
+        "settings": "सेटिंग्स"
+    }
+  },
+  "SettingsPage": {
+    "title": "सेटिंग्स",
+    "profileDescription": "अपने खाते, अधिसूचना और गोपनीयता सेटिंग्स का प्रबंधन करें।",
+    "clinicDescription": "हेल्थब्रिज प्लेटफ़ॉर्म के लिए वैश्विक सेटिंग्स कॉन्फ़िगर करें।",
+    "doctorDescription": "अपने खाते, अधिसूचना और पेशेवर प्रोफ़ाइल सेटिंग्स का प्रबंधन करें।"
+  },
+  "SettingsForm": {
+      "appearanceTitle": "दिखावट",
+      "appearanceDescription": "एप्लिकेशन के रंग-रूप को अनुकूलित करें।",
+      "themeLabel": "थीम",
+      "themeDescription": "डैशबोर्ड के लिए थीम चुनें।",
+      "light": "लाइट",
+      "dark": "डार्क",
+      "system": "सिस्टम",
+      "languageLabel": "भाषा",
+      "languageDescription": "डैशबोर्ड के लिए भाषा चुनें।",
+      "english": "अंग्रेज़ी",
+      "hindi": "हिंदी",
+      "marathi": "मराठी",
+      "profileTitle": "प्रोफ़ाइल",
+      "profileDescription": "साइट पर दूसरे आपको इसी तरह देखेंगे।",
+      "fullNameLabel": "पूरा नाम",
+      "fullNamePlaceholder": "आपका नाम",
+      "emailLabel": "ईमेल",
+      "emailPlaceholder": "your.email@example.com",
+      "phoneLabel": "फ़ोन नंबर",
+      "phonePlaceholder": "उदा., (123) 456-7890",
+      "updateProfile": "प्रोफ़ाइल अपडेट करें",
+      "notificationsTitle": "सूचनाएं",
+      "notificationsDescription": "अपनी ईमेल अधिसूचना प्राथमिकताएं प्रबंधित करें।",
+      "communicationEmailsLabel": "संचार ईमेल",
+      "communicationEmailsDescription": "अपॉइंटमेंट और स्वास्थ्य रिकॉर्ड के बारे में ईमेल प्राप्त करें।",
+      "marketingEmailsLabel": "विपणन ईमेल",
+      "marketingEmailsDescription": "नए उत्पादों, सुविधाओं और विशेष प्रस्तावों के बारे में ईमेल प्राप्त करें।",
+      "securityEmailsLabel": "सुरक्षा ईमेल",
+      "securityEmailsDescription": "अपने खाते की सुरक्षा के बारे में ईमेल प्राप्त करें।",
+      "updateNotifications": "सूचनाएं अपडेट करें",
+      "profileUpdated": "प्रोफ़ाइल अपडेट किया गया",
+      "profileUpdatedDesc": "आपकी प्रोफ़ाइल जानकारी सफलतापूर्वक अपडेट कर दी गई है।",
+      "notificationsUpdated": "सूचनाएं अपडेट की गईं",
+      "notificationsUpdatedDesc": "आपकी अधिसूचना प्राथमिकताएं सहेज ली गई हैं।",
+      "themeUpdated": "थीम अपडेट किया गया",
+      "themeUpdatedDesc": "{theme} थीम पर स्विच किया गया।",
+      "languageUpdated": "भाषा अपडेट की गई",
+      "languageUpdatedDesc": "{language} भाषा में स्विच किया गया।"
+  },
+    "PageTitles": {
+      "dashboard": "डैशबोर्ड",
+      "appointments": "अपॉइंटमेंट्स",
+      "reports": "मेरी रिपोर्ट",
+      "prescriptions": "पर्चे",
+      "profile": "प्रोफ़ाइल",
+      "settings": "सेटिंग्स",
+      "availability": "उपलब्धता",
+      "patients": "मेरे मरीज़",
+      "doctors": "डॉक्टरों का प्रबंधन करें",
+      "managePatients": "मरीजों का प्रबंधन करें"
+  }
+}
