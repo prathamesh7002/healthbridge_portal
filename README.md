@@ -114,6 +114,9 @@ Open [http://localhost:9002](http://localhost:9002) to view the application.
 
 ## 📸 Screenshots
 
+### Login Screen
+![Login Screen](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/login-screen.png)
+
 ### Dashboard Overview
 ![Dashboard](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/dashboard.png)
 
@@ -124,9 +127,7 @@ Open [http://localhost:9002](http://localhost:9002) to view the application.
 ![Doctor Dashboard](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/doctor-dashboard.png)
 
 ### Patient Portal
-![Patient Portal](### Doctor Dashboard
-![Doctor Dashboard](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/patient.png)
-)
+![Patient Portal](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/patient.png)
 
 ## 🔧 Installation
 

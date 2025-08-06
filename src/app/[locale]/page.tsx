@@ -1,7 +1,6 @@
 'use client';
 
 import { LoginForm } from '@/components/auth/login-form';
-import Image from 'next/image';
 import { HeartPulse } from 'lucide-react';
 import {useTranslations} from 'next-intl';
 
@@ -26,14 +25,15 @@ export default function LoginPage() {
           <LoginForm />
         </div>
       </div>
-      <div className="hidden bg-muted lg:block relative">
-        <Image
-          src="https://placehold.co/1200x1920.png"
-          alt="A doctor attending a patient"
-          data-ai-hint="medical professional future"
-          fill
-          className="h-full w-full object-cover"
-        />
+      <div 
+        className="hidden bg-muted lg:block relative"
+        style={{
+          backgroundImage: 'url(/main-img.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
       </div>
     </div>
