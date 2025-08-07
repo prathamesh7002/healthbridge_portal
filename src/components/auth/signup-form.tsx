@@ -15,6 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { supabase } from '@/lib/supabaseClient';
 
 const signupSchema = z.object({
   fullName: z.string().min(2, { message: 'Full name must be at least 2 characters.' }),
@@ -42,16 +43,30 @@ export function SignupForm() {
     },
   });
 
-  const onSubmit = (data: SignupFormValues) => {
+  const onSubmit = async (data: SignupFormValues) => {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    const { email, password, fullName, role } = data;
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { fullName, role },
+      },
+    });
+    setIsLoading(false);
+    if (error) {
       toast({
-        title: tToast("accountCreatedTitle"),
-        description: tToast("accountCreatedDescription"),
+        variant: 'destructive',
+        title: tToast('signupErrorTitle'),
+        description: error.message,
       });
-      router.push(`/`);
-    }, 1500);
+      return;
+    }
+    toast({
+      title: tToast('accountCreatedTitle'),
+      description: tToast('accountCreatedDescription'),
+    });
+    router.push(`/`);
   };
 
   return (
