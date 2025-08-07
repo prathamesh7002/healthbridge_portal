@@ -53,7 +53,7 @@ const defaultNotificationsValues: Partial<NotificationsFormValues> = {
 }
 
 interface SettingsFormProps {
-    userRole: "admin" | "doctor" | "patient";
+    userRole: "doctor" | "patient";
 }
 
 export function SettingsForm({ userRole }: SettingsFormProps) {

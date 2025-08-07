@@ -22,8 +22,8 @@
     "roleLabel": "Role",
     "rolePlaceholder": "Select your role",
     "patient": "Patient",
-    "doctor": "Doctor",
-    "admin": "Admin"
+    "doctor": "Doctor"
+
   },
   "SignupForm": {
     "fullNameLabel": "Full Name",
@@ -67,13 +67,7 @@
         "appointments": "Appointments",
         "myPatients": "My Patients",
         "availability": "Availability",
-        "profile": "Profile",
-        "settings": "Settings"
-    },
-    "adminNav": {
-        "dashboard": "Dashboard",
-        "manageDoctors": "Manage Doctors",
-        "managePatients": "Manage Patients",
+        "whatsapp": "WhatsApp",
         "profile": "Profile",
         "settings": "Settings"
     }
@@ -134,6 +128,37 @@
       "availability": "Availability",
       "patients": "My Patients",
       "doctors": "Manage Doctors",
-      "managePatients": "Manage Patients"
+      "managePatients": "Manage Patients",
+      "whatsapp": "WhatsApp Integration"
+  },
+  "WhatsAppDashboard": {
+    "title": "WhatsApp Integration",
+    "description": "Manage appointments and patient interactions through WhatsApp",
+    "totalAppointments": "Total Appointments",
+    "pendingAppointments": "Pending",
+    "completedAppointments": "Completed",
+    "activeConversations": "Active Chats",
+    "appointments": "Appointments",
+    "scanner": "QR Scanner",
+    "noAppointments": "No WhatsApp appointments yet",
+    "appointmentsWillAppear": "Appointments will appear here when patients book via WhatsApp",
+    "viewDetails": "View Details"
+  },
+  "QRScanner": {
+    "title": "Scan Patient QR Code",
+    "description": "Scan the QR code from patient's WhatsApp to access their medical records",
+    "startCamera": "Start Camera",
+    "simulateQRScan": "Simulate QR Scan",
+    "scanning": "Scanning...",
+    "patientRecordRetrieved": "Patient Record Retrieved",
+    "bloodPressureHistory": "Blood Pressure History",
+    "diabetesManagement": "Diabetes Management",
+    "recentPrescriptions": "Recent Prescriptions",
+    "recentLabReports": "Recent Lab Reports",
+    "lastHbA1c": "Last HbA1c",
+    "currentMedication": "Current Medication",
+    "cameraAccessDenied": "Camera access denied. Please allow camera permissions.",
+    "errorScanning": "Error scanning QR code",
+    "failedToRetrieve": "Failed to retrieve patient data"
   }
 }

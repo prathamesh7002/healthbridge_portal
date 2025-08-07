@@ -20,7 +20,7 @@ import { useTranslations } from 'next-intl';
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email.' }),
   password: z.string().min(1, { message: 'Password is required.' }),
-  role: z.enum(['patient', 'doctor', 'admin'], { required_error: 'You need to select a role.' }),
+  role: z.enum(['patient', 'doctor'], { required_error: 'You need to select a role.' }),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -28,7 +28,6 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const demoUsers = {
     'patient@example.com': 'patient027',
     'doctor@example.com': 'doctor027',
-    'admin@example.com': 'admin027',
 };
 
 export function LoginForm() {
@@ -134,7 +133,6 @@ export function LoginForm() {
                 <SelectContent>
                   <SelectItem value="patient">{t("patient")}</SelectItem>
                   <SelectItem value="doctor">{t("doctor")}</SelectItem>
-                  <SelectItem value="admin">{t("admin")}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

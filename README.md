@@ -34,7 +34,7 @@ A modern, secure, and intelligent web application designed to revolutionize pers
 ### 🏥 **Multi-Role Healthcare Platform**
 - **Patient Portal**: Book appointments, view prescriptions, upload reports, track health metrics
 - **Doctor Dashboard**: Manage appointments, patient records, availability scheduling
-- **Admin Panel**: User management, system monitoring, clinic analytics
+
 
 ### 📅 **Smart Appointment System**
 - Interactive calendar with real-time availability
