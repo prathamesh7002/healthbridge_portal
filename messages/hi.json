@@ -22,8 +22,7 @@
     "roleLabel": "भूमिका",
     "rolePlaceholder": "अपनी भूमिका चुनें",
     "patient": "मरीज़",
-    "doctor": "डॉक्टर",
-    "admin": "व्यवस्थापक"
+    "doctor": "डॉक्टर"
   },
   "SignupForm": {
     "fullNameLabel": "पूरा नाम",
@@ -67,13 +66,6 @@
         "appointments": "अपॉइंटमेंट्स",
         "myPatients": "मेरे मरीज़",
         "availability": "उपलब्धता",
-        "profile": "प्रोफ़ाइल",
-        "settings": "सेटिंग्स"
-    },
-    "adminNav": {
-        "dashboard": "डैशबोर्ड",
-        "manageDoctors": "डॉक्टरों का प्रबंधन करें",
-        "managePatients": "मरीजों का प्रबंधन करें",
         "profile": "प्रोफ़ाइल",
         "settings": "सेटिंग्स"
     }

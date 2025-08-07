@@ -20,7 +20,7 @@ export default function AuthenticatedLayout({
   useEffect(() => {
     try {
       const role = localStorage.getItem('userRole');
-      if (role && ['patient', 'doctor', 'admin'].includes(role)) {
+      if (role && ['patient', 'doctor'].includes(role)) {
         setUserRole(role);
       } else {
         router.push('/');

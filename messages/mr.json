@@ -22,8 +22,7 @@
     "roleLabel": "भूमिका",
     "rolePlaceholder": "तुमची भूमिका निवडा",
     "patient": "रुग्ण",
-    "doctor": "डॉक्टर",
-    "admin": "प्रशासक"
+    "doctor": "डॉक्टर"
   },
   "SignupForm": {
     "fullNameLabel": "पूर्ण नाव",
@@ -67,13 +66,6 @@
         "appointments": "अपॉइंटमेंट्स",
         "myPatients": "माझे रुग्ण",
         "availability": "उपलब्धता",
-        "profile": "प्रोफाइल",
-        "settings": "सेटिंग्ज"
-    },
-    "adminNav": {
-        "dashboard": "डॅशबोर्ड",
-        "manageDoctors": "डॉक्टरांचे व्यवस्थापन करा",
-        "managePatients": "रुग्णांचे व्यवस्थापन करा",
         "profile": "प्रोफाइल",
         "settings": "सेटिंग्ज"
     }

@@ -22,8 +22,8 @@
     "roleLabel": "Role",
     "rolePlaceholder": "Select your role",
     "patient": "Patient",
-    "doctor": "Doctor",
-    "admin": "Admin"
+    "doctor": "Doctor"
+
   },
   "SignupForm": {
     "fullNameLabel": "Full Name",
@@ -67,13 +67,6 @@
         "appointments": "Appointments",
         "myPatients": "My Patients",
         "availability": "Availability",
-        "profile": "Profile",
-        "settings": "Settings"
-    },
-    "adminNav": {
-        "dashboard": "Dashboard",
-        "manageDoctors": "Manage Doctors",
-        "managePatients": "Manage Patients",
         "profile": "Profile",
         "settings": "Settings"
     }

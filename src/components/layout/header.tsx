@@ -17,7 +17,7 @@ function getPageTitleKey(pathname: string): string {
   const page = segments[segments.length - 1];
   
   if (page === 'doctors') return 'doctors';
-  if (page === 'patients' && segments.includes('admin')) return 'managePatients';
+
   if (page === 'patients') return 'patients';
 
   return page.replace('-', ' ');

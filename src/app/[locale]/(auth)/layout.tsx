@@ -24,7 +24,7 @@ export default function AuthenticatedLayout({
     // This code now runs only on the client
     try {
       const role = localStorage.getItem('userRole');
-      if (role && ['patient', 'doctor', 'admin'].includes(role)) {
+      if (role && ['patient', 'doctor'].includes(role)) {
         setUserRole(role);
       } else {
         router.push(`/${locale}/`);
