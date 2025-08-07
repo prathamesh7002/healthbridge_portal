@@ -23,6 +23,7 @@ import {
   Users,
   LogOut,
   Settings,
+  MessageCircle,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -48,6 +49,7 @@ export function AppSidebarNav({ userRole }: { userRole: string }) {
           { name: t('doctorNav.appointments'), href: "/doctor/appointments", icon: Calendar },
           { name: t('doctorNav.myPatients'), href: "/doctor/patients", icon: Users },
           { name: t('doctorNav.availability'), href: "/doctor/availability", icon: CalendarPlus },
+          { name: t('doctorNav.whatsapp'), href: "/doctor/whatsapp", icon: MessageCircle },
           { name: t('doctorNav.profile'), href: "/doctor/profile", icon: User },
           { name: t('doctorNav.settings'), href: "/doctor/settings", icon: Settings },
         ];

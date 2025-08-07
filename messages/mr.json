@@ -66,6 +66,7 @@
         "appointments": "अपॉइंटमेंट्स",
         "myPatients": "माझे रुग्ण",
         "availability": "उपलब्धता",
+        "whatsapp": "व्हाट्सअॅप",
         "profile": "प्रोफाइल",
         "settings": "सेटिंग्ज"
     }
@@ -126,6 +127,37 @@
       "availability": "उपलब्धता",
       "patients": "माझे रुग्ण",
       "doctors": "डॉक्टरांचे व्यवस्थापन करा",
-      "managePatients": "रुग्णांचे व्यवस्थापन करा"
+      "managePatients": "रुग्णांचे व्यवस्थापन करा",
+      "whatsapp": "व्हाट्सअॅप एकीकरण"
+  },
+  "WhatsAppDashboard": {
+    "title": "व्हाट्सअॅप एकीकरण",
+    "description": "व्हाट्सअॅप मार्फत अपॉइंटमेंट आणि रुग्णांच्या संवादाचे व्यवस्थापन करा",
+    "totalAppointments": "एकूण अपॉइंटमेंट्स",
+    "pendingAppointments": "प्रतीक्षामान",
+    "completedAppointments": "पूर्ण",
+    "activeConversations": "सक्रिय चॅट्स",
+    "appointments": "अपॉइंटमेंट्स",
+    "scanner": "QR स्कॅनर",
+    "noAppointments": "अजून कोणती व्हाट्सअॅप अपॉइंटमेंट नाही",
+    "appointmentsWillAppear": "जेव्हा रुग्ण व्हाट्सअॅप मार्फत बुक करतील तेव्हा अपॉइंटमेंट्स येथे दिसतील",
+    "viewDetails": "तपशील पहा"
+  },
+  "QRScanner": {
+    "title": "रुग्णाचा QR कोड स्कॅन करा",
+    "description": "रुग्णाच्या व्हाट्सअॅप वरून QR कोड स्कॅन करून त्यांचे मेडिकल रेकॉर्ड पहा",
+    "startCamera": "कॅमेरा सुरू करा",
+    "simulateQRScan": "QR स्कॅनचे अनुकरण करा",
+    "scanning": "स्कॅन करत आहे...",
+    "patientRecordRetrieved": "रुग्णाचा रेकॉर्ड मिळाला",
+    "bloodPressureHistory": "रक्तदाबाचा इतिहास",
+    "diabetesManagement": "मधुमेह व्यवस्थापन",
+    "recentPrescriptions": "अलीकडची प्रिस्क्रिप्शन्स",
+    "recentLabReports": "अलीकडचे लॅब अहवाल",
+    "lastHbA1c": "शेवटचा HbA1c",
+    "currentMedication": "सद्याची औषधे",
+    "cameraAccessDenied": "कॅमेरा अक्सेस नाकारला। कृपया कॅमेरा परवानगी द्या।",
+    "errorScanning": "QR कोड स्कॅन करण्यात त्रुटी",
+    "failedToRetrieve": "रुग्णाचा डेटा मिळवण्यात अयशस्वी"
   }
 }
