@@ -17,6 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabaseClient';
+import { useAuth } from '@/lib/auth-provider';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email.' }),
@@ -30,6 +31,7 @@ export function LoginForm() {
   const router = useRouter();
   const locale = useLocale();
   const { toast } = useToast();
+  const { setUserRole } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const t = useTranslations('LoginForm');
   const tPage = useTranslations('LoginPage');
@@ -46,25 +48,54 @@ export function LoginForm() {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     const { email, password, role } = data;
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setIsLoading(false);
-    if (error) {
+    
+    try {
+      const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password });
+      
+      if (error) {
+        toast({
+          variant: 'destructive',
+          title: tToast('invalidCredentialsTitle'),
+          description: tToast('invalidCredentialsDescription'),
+        });
+        return;
+      }
+
+      // Check user role in metadata
+      const userRole = signInData.user?.user_metadata?.role;
+      if (userRole !== role) {
+        toast({
+          variant: 'destructive',
+          title: tToast('invalidCredentialsTitle'),
+          description: t('roleLabel') + ' does not match for this account.',
+        });
+        return;
+      }
+
+      // Set user role in AuthProvider (which will also save to localStorage)
+      setUserRole(role);
+      
+      // Store email in localStorage for convenience
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('userEmail', email);
+      }
+
+      toast({
+        title: tToast('loginSuccessTitle'),
+        description: tToast('loginSuccessDescription'),
+      });
+      
+      router.push(`/${locale}/${role}/dashboard`);
+    } catch (error) {
+      console.error('Login error:', error);
       toast({
         variant: 'destructive',
         title: tToast('invalidCredentialsTitle'),
-        description: tToast('invalidCredentialsDescription'),
+        description: 'An unexpected error occurred. Please try again.',
       });
-      return;
+    } finally {
+      setIsLoading(false);
     }
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('userRole', role);
-      localStorage.setItem('userEmail', email);
-    }
-    toast({
-      title: tToast('loginSuccessTitle'),
-      description: tToast('loginSuccessDescription'),
-    });
-    router.push(`/${locale}/${role}/dashboard`);
   };
 
   return (

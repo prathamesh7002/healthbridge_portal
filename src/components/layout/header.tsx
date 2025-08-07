@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useAuth } from "@/lib/auth-provider";
 
 function getPageTitleKey(pathname: string): string {
   const segments = pathname.split('/').filter(Boolean);
@@ -26,19 +27,18 @@ function getPageTitleKey(pathname: string): string {
 export function AppHeader() {
   const router = useRouter();
   const pathname = usePathname();
+  const { userRole, signOut } = useAuth();
   const t = useTranslations("Header");
   const tPage = useTranslations("PageTitles");
   
   const [titleKey, setTitleKey] = useState("dashboard");
-  const [userRole, setUserRole] = useState<string|null>(null);
 
   useEffect(() => {
     setTitleKey(getPageTitleKey(pathname));
-    setUserRole(localStorage.getItem('userRole'));
   }, [pathname]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("userRole");
+  const handleLogout = async () => {
+    await signOut();
     router.push("/");
   };
 

@@ -10,19 +10,53 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { QrCode, Download, Copy as CopyIcon, Eye } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { useAuth } from '@/lib/auth-provider';
+import { getPatientProfile, updatePatientProfile } from '@/lib/patient-profile';
 
 export default function PatientProfilePage() {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [qrOpen, setQrOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const qrRef = useRef<HTMLDivElement>(null);
 
-  const handleSaveChanges = () => {
-    toast({
-      title: "Profile Updated",
-      description: "Your personal information has been saved.",
-    });
+  useEffect(() => {
+    if (!user) return;
+    setLoading(true);
+    getPatientProfile(user.id)
+      .then((data) => setProfile(data))
+      .catch(() => setProfile(null))
+      .finally(() => setLoading(false));
+  }, [user]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setProfile((prev: any) => ({ ...prev, [e.target.id]: e.target.value }));
+  };
+
+  const handleSaveChanges = async () => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      await updatePatientProfile(user.id, profile);
+      toast({
+        title: "Profile Updated",
+        description: "Your personal information has been saved.",
+      });
+    } catch (err: any) {
+      toast({
+        variant: 'destructive',
+        title: "Error updating profile",
+        description: err.message,
+      });
+    }
+    setSaving(false);
   };
 
   const handleUpdatePassword = () => {
@@ -33,43 +67,48 @@ export default function PatientProfilePage() {
   };
 
   // Mock patient data for QR code
-  const patientData = {
-    fullName: "John Doe",
-    age: 39,
-    gender: "Male",
-    bloodGroup: "O+",
-    contactNumber: "123-456-7890",
-    email: "john.doe@example.com",
-    address: "123 Main St, Springfield, USA",
-    patientId: "PAT005",
-  };
+  // const patientData = {
+  //   fullName: "John Doe",
+  //   age: 39,
+  //   gender: "Male",
+  //   bloodGroup: "O+",
+  //   contactNumber: "123-456-7890",
+  //   email: "john.doe@example.com",
+  //   address: "123 Main St, Springfield, USA",
+  //   patientId: "PAT005",
+  // };
 
   // State for QR modal
-  const [qrOpen, setQrOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const qrRef = useRef<HTMLDivElement>(null);
+  // const [qrOpen, setQrOpen] = useState(false);
+  // const [copied, setCopied] = useState(false);
+  // const qrRef = useRef<HTMLDivElement>(null);
 
   // Prepare QR data as string
-  const qrString = `Full Name: ${patientData.fullName}\nAge: ${patientData.age}\nGender: ${patientData.gender}\nBlood Group: ${patientData.bloodGroup}\nContact Number: ${patientData.contactNumber}\nEmail ID: ${patientData.email}\nAddress: ${patientData.address}\nPatient ID: ${patientData.patientId}`;
+  // const qrString = `Full Name: ${patientData.fullName}\nAge: ${patientData.age}\nGender: ${patientData.gender}\nBlood Group: ${patientData.bloodGroup}\nContact Number: ${patientData.contactNumber}\nEmail ID: ${patientData.email}\nAddress: ${patientData.address}\nPatient ID: ${patientData.patientId}`;
 
   // Download QR as PNG
-  const handleDownloadQR = () => {
-    const canvas = (qrRef.current?.querySelector('canvas')) as HTMLCanvasElement | null;
-    if (canvas) {
-      const url = canvas.toDataURL("image/png");
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `patient-profile-qr.png`;
-      a.click();
-    }
-  };
+  // const handleDownloadQR = () => {
+  //   const canvas = (qrRef.current?.querySelector('canvas')) as HTMLCanvasElement | null;
+  //   if (canvas) {
+  //     const url = canvas.toDataURL("image/png");
+  //     const a = document.createElement("a");
+  //     a.href = url;
+  //     a.download = `patient-profile-qr.png`;
+  //     a.click();
+  //   }
+  // };
 
   // Copy patient data as plain text
-  const handleCopyData = async () => {
-    await navigator.clipboard.writeText(qrString);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
+  // const handleCopyData = async () => {
+  //   await navigator.clipboard.writeText(qrString);
+  //   setCopied(true);
+  //   setTimeout(() => setCopied(false), 1500);
+  // };
+
+  if (loading) return <div className="p-8 text-center">Loading...</div>;
+  if (!profile) return <div className="p-8 text-center">Profile not found.</div>;
+
+  const qrString = `Full Name: ${profile.full_name}\nAge: ${profile.age}\nGender: ${profile.gender}\nBlood Group: ${profile.blood_group}\nContact Number: ${profile.contact_number}\nEmail ID: ${profile.email}\nAddress: ${profile.address}\nPatient ID: ${profile.patient_id}`;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -109,74 +148,59 @@ export default function PatientProfilePage() {
               </Tooltip>
             </CardContent>
           </Card>
-            <div className="flex items-center gap-4">
-                <Avatar className="h-20 w-20">
-                    <AvatarImage src="https://placehold.co/80x80.png" alt="Patient" data-ai-hint="person portrait"/>
-                    <AvatarFallback>JD</AvatarFallback>
-                </Avatar>
-                <div className="grid gap-1.5">
-                    <h3 className="text-lg font-semibold">John Doe</h3>
-                    <p className="text-sm text-muted-foreground">john.doe@example.com</p>
-                    <div className="flex gap-2">
-                        <Badge variant="secondary">Patient ID: PAT005</Badge>
-                        <Badge variant="success">Status: Active</Badge>
-                    </div>
-                </div>
-                <Button variant="outline" size="sm" className="ml-auto">Change Photo</Button>
+          <div className="flex items-center gap-4">
+            <Avatar className="h-20 w-20">
+              <AvatarImage src="https://placehold.co/80x80.png" alt="Patient" data-ai-hint="person portrait" />
+              <AvatarFallback>{profile.full_name ? profile.full_name[0] : "P"}</AvatarFallback>
+            </Avatar>
+            <div className="grid gap-1.5">
+              <h3 className="text-lg font-semibold">{profile.full_name}</h3>
+              <p className="text-sm text-muted-foreground">{profile.email}</p>
+              <div className="flex gap-2">
+                <Badge variant="secondary">Patient ID: {profile.patient_id}</Badge>
+                <Badge variant="success">Status: Active</Badge>
+              </div>
             </div>
-            
-            <Separator />
-
-            <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-4">
-                    <h4 className="font-medium">Personal Information</h4>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="first-name">First Name</Label>
-                            <Input id="first-name" defaultValue="John" />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="last-name">Last Name</Label>
-                            <Input id="last-name" defaultValue="Doe" />
-                        </div>
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="email">Email Address</Label>
-                        <Input id="email" type="email" defaultValue="john.doe@example.com" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input id="phone" type="tel" defaultValue="123-456-7890" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="dob">Date of Birth</Label>
-                        <Input id="dob" type="date" defaultValue="1985-05-20" />
-                    </div>
-                    <Button onClick={handleSaveChanges}>Save Changes</Button>
+            <Button variant="outline" size="sm" className="ml-auto">Change Photo</Button>
+          </div>
+          <Separator />
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-4">
+              <h4 className="font-medium">Personal Information</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="full_name">Full Name</Label>
+                  <Input id="full_name" value={profile.full_name || ''} onChange={handleChange} />
                 </div>
-
-                <div className="space-y-4">
-                    <h4 className="font-medium">Emergency Contact</h4>
-                    <div className="space-y-2">
-                        <Label htmlFor="emergency-name">Contact Name</Label>
-                        <Input id="emergency-name" defaultValue="Jane Doe" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="emergency-relationship">Relationship</Label>
-                        <Input id="emergency-relationship" defaultValue="Spouse" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="emergency-phone">Contact Phone</Label>
-                        <Input id="emergency-phone" type="tel" defaultValue="098-765-4321" />
-                    </div>
-                     <h4 className="font-medium pt-4">Change Password</h4>
-                     <div className="space-y-2">
-                        <Label htmlFor="new-password">New Password</Label>
-                        <Input id="new-password" type="password" />
-                    </div>
-                    <Button onClick={handleUpdatePassword}>Update Password</Button>
+                <div className="space-y-2">
+                  <Label htmlFor="age">Age</Label>
+                  <Input id="age" value={profile.age || ''} onChange={handleChange} />
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="gender">Gender</Label>
+                <Input id="gender" value={profile.gender || ''} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="blood_group">Blood Group</Label>
+                <Input id="blood_group" value={profile.blood_group || ''} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="contact_number">Phone Number</Label>
+                <Input id="contact_number" value={profile.contact_number || ''} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <Input id="email" type="email" value={profile.email || ''} onChange={handleChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="address">Address</Label>
+                <Input id="address" value={profile.address || ''} onChange={handleChange} />
+              </div>
+              <Button onClick={handleSaveChanges} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</Button>
             </div>
+            {/* Emergency contact and password change can be added here if needed */}
+          </div>
         </CardContent>
       </Card>
       {/* QR Code Modal */}
@@ -194,7 +218,7 @@ export default function PatientProfilePage() {
           <DialogFooter className="flex gap-2 justify-center">
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" onClick={handleCopyData} aria-label="Copy Data">
+                <Button variant="ghost" size="icon" onClick={async () => { await navigator.clipboard.writeText(qrString); setCopied(true); setTimeout(() => setCopied(false), 1500); }} aria-label="Copy Data">
                   <CopyIcon className="h-5 w-5" />
                 </Button>
               </TooltipTrigger>
@@ -202,7 +226,16 @@ export default function PatientProfilePage() {
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" onClick={handleDownloadQR} aria-label="Download QR">
+                <Button variant="ghost" size="icon" onClick={() => {
+                  const canvas = (qrRef.current?.querySelector('canvas')) as HTMLCanvasElement | null;
+                  if (canvas) {
+                    const url = canvas.toDataURL("image/png");
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `patient-profile-qr.png`;
+                    a.click();
+                  }
+                }} aria-label="Download QR">
                   <Download className="h-5 w-5" />
                 </Button>
               </TooltipTrigger>
