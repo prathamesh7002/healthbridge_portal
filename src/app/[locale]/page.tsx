@@ -17,7 +17,7 @@ export default function LoginPage() {
   // Redirect authenticated users to their dashboard
   useEffect(() => {
     if (!loading && user && userRole) {
-      router.push(`/${locale}/${userRole}/dashboard`);
+      router.push(`/${userRole}/dashboard`);
     }
   }, [user, userRole, loading, router, locale]);
 

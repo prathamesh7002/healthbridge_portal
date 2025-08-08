@@ -8,5 +8,6 @@ export default createMiddleware({
 export const config = {
   // Skip all paths that should not be internationalized. This example skips the
   // folders "api", "images" and "_next" (that contain static assets)
-  matcher: ['/((?!api|images|_next).*)']
+  // Also skip new app sections that don't use locale prefixes
+  matcher: ['/((?!api|images|_next|doctor|patient).*)']
 };
