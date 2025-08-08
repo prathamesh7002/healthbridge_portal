@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth-provider";
+// removed locale-based pathing
 
 function getPageTitleKey(pathname: string): string {
   const segments = pathname.split('/').filter(Boolean);
@@ -38,8 +39,18 @@ export function AppHeader() {
   }, [pathname]);
 
   const handleLogout = async () => {
-    await signOut();
-    router.push("/");
+    try {
+      console.log('Logging out...');
+      await signOut();
+      console.log('SignOut completed, redirecting...');
+      
+      router.push('/');
+      console.log('Redirected to:', '/');
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // Force redirect even if there's an error
+      router.push('/');
+    }
   };
 
   const settingsPath = userRole ? `/${userRole}/settings` : '#';

@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabaseClient';
+import { createPatientProfile } from '@/lib/patient-profile';
 
 const signupSchema = z.object({
   fullName: z.string().min(2, { message: 'Full name must be at least 2 characters.' }),
@@ -46,27 +47,56 @@ export function SignupForm() {
   const onSubmit = async (data: SignupFormValues) => {
     setIsLoading(true);
     const { email, password, fullName, role } = data;
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { fullName, role },
-      },
-    });
-    setIsLoading(false);
-    if (error) {
+    
+    try {
+      const { data: signUpData, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { fullName, role },
+        },
+      });
+      
+      if (error) {
+        toast({
+          variant: 'destructive',
+          title: tToast('signupErrorTitle'),
+          description: error.message,
+        });
+        return;
+      }
+
+      // If signup is successful and user is a patient, create their profile
+      if (signUpData.user && role === 'patient') {
+        try {
+          await createPatientProfile({
+            user_id: signUpData.user.id,
+            full_name: fullName,
+            email: email,
+            patient_id: `PAT${Date.now().toString().slice(-6)}`, // Generate a simple patient ID
+          });
+          console.log('Patient profile created successfully');
+        } catch (profileError) {
+          console.error('Error creating patient profile:', profileError);
+          // Don't block signup if profile creation fails
+        }
+      }
+
+      toast({
+        title: tToast('accountCreatedTitle'),
+        description: tToast('accountCreatedDescription'),
+      });
+      router.push(`/`);
+    } catch (error) {
+      console.error('Signup error:', error);
       toast({
         variant: 'destructive',
         title: tToast('signupErrorTitle'),
-        description: error.message,
+        description: 'An unexpected error occurred. Please try again.',
       });
-      return;
+    } finally {
+      setIsLoading(false);
     }
-    toast({
-      title: tToast('accountCreatedTitle'),
-      description: tToast('accountCreatedDescription'),
-    });
-    router.push(`/`);
   };
 
   return (

@@ -5,12 +5,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from '@/components/ui/button';
 import { useAuth } from './auth-provider';
 import { getPatientProfile } from './patient-profile';
+import { useLocale } from 'next-intl';
 
 export function ProfileCompletionGuard({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const router = useRouter();
   const [showDialog, setShowDialog] = useState(false);
   const [checked, setChecked] = useState(false);
+  const locale = useLocale();
 
   useEffect(() => {
     async function checkProfile() {

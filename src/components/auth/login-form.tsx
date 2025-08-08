@@ -31,7 +31,7 @@ export function LoginForm() {
   const router = useRouter();
   const locale = useLocale();
   const { toast } = useToast();
-  const { setUserRole } = useAuth();
+  const { setUserRole, refreshPatientProfile } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const t = useTranslations('LoginForm');
   const tPage = useTranslations('LoginPage');
@@ -80,12 +80,22 @@ export function LoginForm() {
         localStorage.setItem('userEmail', email);
       }
 
+      // If user is a patient, refresh their profile to ensure it's created/loaded
+      if (role === 'patient') {
+        try {
+          await refreshPatientProfile();
+        } catch (error) {
+          console.error('Error refreshing patient profile:', error);
+          // Don't block login if profile refresh fails
+        }
+      }
+
       toast({
         title: tToast('loginSuccessTitle'),
         description: tToast('loginSuccessDescription'),
       });
       
-      router.push(`/${locale}/${role}/dashboard`);
+      router.push(`/${role}/dashboard`);
     } catch (error) {
       console.error('Login error:', error);
       toast({
