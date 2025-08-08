@@ -45,13 +45,13 @@ export default function AuthenticatedLayout({
   }
 
   return (
-    <SidebarProvider defaultOpen>
+    <SidebarProvider defaultOpen={false}>
         <Sidebar variant="floating" collapsible="icon">
             <AppSidebarNav userRole={userRole} />
         </Sidebar>
         <SidebarInset>
             <AppHeader />
-            <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            <main className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-8">
                 {children}
             </main>
         </SidebarInset>

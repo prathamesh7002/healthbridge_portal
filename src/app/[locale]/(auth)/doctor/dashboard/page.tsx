@@ -25,8 +25,22 @@ import {
   AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
-import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
-import { Bar, BarChart as RechartsBarChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, LineChart, PieChart, Pie, Cell } from "recharts";
+import dynamic from 'next/dynamic';
+import { type ChartConfig } from "@/components/ui/chart";
+
+const ChartContainer = dynamic(() => import('@/components/ui/chart').then(m => m.ChartContainer), { ssr: false });
+const ChartTooltip = dynamic(() => import('@/components/ui/chart').then(m => m.ChartTooltip), { ssr: false });
+const ChartTooltipContent = dynamic(() => import('@/components/ui/chart').then(m => m.ChartTooltipContent), { ssr: false });
+
+const RechartsBarChart = dynamic(() => import('recharts').then(m => m.BarChart), { ssr: false });
+const CartesianGrid = dynamic(() => import('recharts').then(m => m.CartesianGrid), { ssr: false });
+const XAxis = dynamic(() => import('recharts').then(m => m.XAxis), { ssr: false });
+const YAxis = dynamic(() => import('recharts').then(m => m.YAxis), { ssr: false });
+const Tooltip = dynamic(() => import('recharts').then(m => m.Tooltip), { ssr: false });
+const Bar = dynamic(() => import('recharts').then(m => m.Bar), { ssr: false });
+const PieChart = dynamic(() => import('recharts').then(m => m.PieChart), { ssr: false });
+const Pie = dynamic(() => import('recharts').then(m => m.Pie), { ssr: false });
+const Cell = dynamic(() => import('recharts').then(m => m.Cell), { ssr: false });
 
 // Chart data for patient trends
 const patientTrendData = [

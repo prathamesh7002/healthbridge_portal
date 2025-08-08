@@ -36,8 +36,8 @@ export default function LoginPage() {
   }
   
   return (
-    <div className="min-h-screen w-full lg:grid lg:grid-cols-2 bg-background">
-      <div className="flex items-center justify-center p-6 sm:p-12">
+    <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-2 bg-background">
+      <div className="flex items-center justify-center p-4 sm:p-8 lg:p-12">
         <div className="mx-auto grid w-full max-w-md gap-8">
           <div className="grid gap-4 text-center">
             <div className="flex justify-center">
@@ -45,7 +45,7 @@ export default function LoginPage() {
                 <HeartPulse className="h-10 w-10 text-primary" />
               </div>
             </div>
-            <h1 className="text-4xl font-bold text-primary">{t('title')}</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold text-primary">{t('title')}</h1>
             <p className="text-balance text-muted-foreground">
               {t('subtitle')}
             </p>
@@ -56,7 +56,7 @@ export default function LoginPage() {
       <div 
         className="hidden bg-muted lg:block relative"
         style={{
-          backgroundImage: 'url(/main-img.png)',
+          backgroundImage: 'url(/main.jpg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
