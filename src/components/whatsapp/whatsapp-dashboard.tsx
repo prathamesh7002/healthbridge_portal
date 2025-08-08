@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { QRScanner } from './qr-scanner';
+import dynamic from 'next/dynamic';
 import { MessageCircle, Calendar, QrCode, Users, Clock, Phone } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -28,6 +28,8 @@ interface WhatsAppStats {
   completedAppointments: number;
   activeConversations: number;
 }
+
+const QRScanner = dynamic(() => import('./qr-scanner').then(m => m.QRScanner), { ssr: false, loading: () => null });
 
 export function WhatsAppDashboard() {
   const t = useTranslations('WhatsAppDashboard');
@@ -214,28 +216,28 @@ export function WhatsAppDashboard() {
                 {appointments.map((appointment) => (
                   <div
                     key={appointment.id}
-                    className="flex items-center justify-between p-4 border rounded-lg"
+                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 border rounded-lg"
                   >
-                    <div className="space-y-1">
+                    <div className="space-y-1 min-w-0">
                       <div className="flex items-center space-x-2">
-                        <h4 className="font-medium">{appointment.patientName}</h4>
+                        <h4 className="font-medium truncate max-w-[14rem] sm:max-w-none">{appointment.patientName}</h4>
                         <span className="text-xs text-muted-foreground">
                           {getLanguageFlag(appointment.language)}
                         </span>
                       </div>
-                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                        <span className="flex items-center">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                        <span className="flex items-center min-w-0">
                           <Phone className="h-3 w-3 mr-1" />
                           {appointment.patientPhone}
                         </span>
-                        <span className="flex items-center">
+                        <span className="flex items-center min-w-0">
                           <Calendar className="h-3 w-3 mr-1" />
                           {appointment.date} at {appointment.slot}
                         </span>
-                        <span>{appointment.doctorName}</span>
+                        <span className="truncate">{appointment.doctorName}</span>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 sm:self-auto">
                       {getStatusBadge(appointment.status)}
                       <Button variant="outline" size="sm">
                         View Details
