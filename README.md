@@ -325,6 +325,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
+
 <div align="center">
   <p>Made with ❤️ for better healthcare</p>
   <p>HealthBridge Pro - Revolutionizing Healthcare Management</p>
