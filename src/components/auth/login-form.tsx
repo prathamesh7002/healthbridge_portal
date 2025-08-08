@@ -16,6 +16,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { supabase } from '@/lib/supabaseClient';
+import { useAuth } from '@/lib/auth-provider';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email.' }),
@@ -25,15 +27,11 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-const demoUsers = {
-    'patient@example.com': 'patient027',
-    'doctor@example.com': 'doctor027',
-};
-
 export function LoginForm() {
   const router = useRouter();
   const locale = useLocale();
   const { toast } = useToast();
+  const { setUserRole } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const t = useTranslations('LoginForm');
   const tPage = useTranslations('LoginPage');
@@ -47,41 +45,57 @@ export function LoginForm() {
     },
   });
 
-  const onSubmit = (data: LoginFormValues) => {
+  const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
-
-    setTimeout(() => {
-      let isValid = false;
-      const demoPassword = demoUsers[data.email as keyof typeof demoUsers];
-
-      if (demoPassword && demoPassword === data.password) {
-          isValid = true;
-      } else if (!demoUsers.hasOwnProperty(data.email)) {
-          isValid = true;
-      }
+    const { email, password, role } = data;
+    
+    try {
+      const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password });
       
-      setIsLoading(false);
-
-      if (isValid) {
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('userRole', data.role);
-          localStorage.setItem('userEmail', data.email);
-        }
-        
+      if (error) {
         toast({
-          title: tToast("loginSuccessTitle"),
-          description: tToast("loginSuccessDescription"),
+          variant: 'destructive',
+          title: tToast('invalidCredentialsTitle'),
+          description: tToast('invalidCredentialsDescription'),
         });
-        router.push(`/${locale}/${data.role}/dashboard`);
-        router.refresh();
-      } else {
-         toast({
-            variant: "destructive",
-            title: tToast("invalidCredentialsTitle"),
-            description: tToast("invalidCredentialsDescription"),
-        });
+        return;
       }
-    }, 1500);
+
+      // Check user role in metadata
+      const userRole = signInData.user?.user_metadata?.role;
+      if (userRole !== role) {
+        toast({
+          variant: 'destructive',
+          title: tToast('invalidCredentialsTitle'),
+          description: t('roleLabel') + ' does not match for this account.',
+        });
+        return;
+      }
+
+      // Set user role in AuthProvider (which will also save to localStorage)
+      setUserRole(role);
+      
+      // Store email in localStorage for convenience
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('userEmail', email);
+      }
+
+      toast({
+        title: tToast('loginSuccessTitle'),
+        description: tToast('loginSuccessDescription'),
+      });
+      
+      router.push(`/${locale}/${role}/dashboard`);
+    } catch (error) {
+      console.error('Login error:', error);
+      toast({
+        variant: 'destructive',
+        title: tToast('invalidCredentialsTitle'),
+        description: 'An unexpected error occurred. Please try again.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

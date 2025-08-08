@@ -1,53 +1,41 @@
 
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { SidebarProvider, Sidebar, SidebarInset } from '@/components/ui/sidebar';
 import { AppSidebarNav } from '@/components/layout/sidebar-nav';
 import { AppHeader } from '@/components/layout/header';
 import { Loader2 } from 'lucide-react';
+import { useAuth } from '@/lib/auth-provider';
 
 export default function AuthenticatedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [userRole, setUserRole] = useState<string | null>(null);
-  const [isAuthenticating, setIsAuthenticating] = useState(true);
+  const { user, userRole, loading } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    try {
-      const role = localStorage.getItem('userRole');
-      if (role && ['patient', 'doctor'].includes(role)) {
-        setUserRole(role);
-      } else {
-        router.push('/');
-      }
-    } catch (error) {
-        router.push('/');
-    } finally {
-        setIsAuthenticating(false);
+  // Redirect to login if not authenticated
+  React.useEffect(() => {
+    if (!loading && !user) {
+      router.push('/');
     }
-  }, [router]);
+  }, [user, loading, router]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userEmail');
-    router.push('/');
-  };
-
-  if (isAuthenticating) {
+  // Show loading while checking authentication
+  if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
-  
-  if (!userRole) {
-      return null;
+
+  // Don't render anything if not authenticated
+  if (!user || !userRole) {
+    return null;
   }
 
   return (

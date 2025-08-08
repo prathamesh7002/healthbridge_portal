@@ -42,7 +42,9 @@
     "invalidCredentialsTitle": "Invalid Credentials",
     "invalidCredentialsDescription": "The email or password you entered is incorrect. Please try again.",
     "accountCreatedTitle": "Account Created!",
-    "accountCreatedDescription": "Welcome to HealthBridge. Please log in to continue."
+    "accountCreatedDescription": "Welcome to HealthBridge. Please log in to continue.",
+    "signupErrorTitle": "Signup Error",
+    "signupErrorDescription": "There was a problem creating your account. Please try again."
   },
   "Header": {
     "myAccount": "My Account",

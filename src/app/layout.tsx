@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google'
 import { ThemeProvider } from '@/components/layout/theme-provider';
 import {NextIntlClientProvider} from 'next-intl';
 import {getMessages} from 'next-intl/server';
+import { AuthProvider } from '@/lib/auth-provider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -30,15 +31,17 @@ export default async function RootLayout({
     <html lang={locale} suppressHydrationWarning className={inter.variable}>
       <body className="font-sans antialiased">
         <NextIntlClientProvider messages={messages}>
-          <ThemeProvider
-              attribute="class"
-              defaultTheme="dark"
-              enableSystem
-              disableTransitionOnChange
-          >
-              {children}
-              <Toaster />
-          </ThemeProvider>
+          <AuthProvider>
+            <ThemeProvider
+                attribute="class"
+                defaultTheme="dark"
+                enableSystem
+                disableTransitionOnChange
+            >
+                {children}
+                <Toaster />
+            </ThemeProvider>
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>

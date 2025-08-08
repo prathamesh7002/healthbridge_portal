@@ -1,8 +1,37 @@
+'use client';
+
 import { SignupForm } from '@/components/auth/signup-form';
 import Image from 'next/image';
-import { HeartPulse } from 'lucide-react';
+import { HeartPulse, Loader2 } from 'lucide-react';
+import { useAuth } from '@/lib/auth-provider';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function SignupPage() {
+  const { user, userRole, loading } = useAuth();
+  const router = useRouter();
+  
+  // Redirect authenticated users to their dashboard
+  useEffect(() => {
+    if (!loading && user && userRole) {
+      router.push(`/${userRole}/dashboard`);
+    }
+  }, [user, userRole, loading, router]);
+
+  // Show loading while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Don't show signup form if user is already authenticated
+  if (user && userRole) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2 bg-background">
       <div className="hidden bg-muted lg:block relative">
