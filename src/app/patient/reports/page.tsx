@@ -110,6 +110,6 @@ export default function ReportsPage() {
   );
 }
 
-export { default } from "@/app/[locale]/(auth)/patient/reports/page";
+
 
 
