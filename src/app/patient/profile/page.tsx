@@ -13,7 +13,6 @@ import { QrCode, Download, Copy as CopyIcon, Eye } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useAuth } from '@/lib/auth-provider';
 import { updatePatientProfile } from '@/lib/patient-profile';
-import { DebugPanel } from '@/components/shared/debug-panel';
 
 export default function PatientProfilePage() {
   const { toast } = useToast();
@@ -72,7 +71,6 @@ export default function PatientProfilePage() {
   if (!profile) {
     return (
       <div className="space-y-6">
-        <DebugPanel />
         <div className="flex h-screen w-full items-center justify-center bg-background">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
@@ -87,8 +85,6 @@ export default function PatientProfilePage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <DebugPanel />
-
       {!showForm && isIncomplete && (
         <Card className="border-yellow-200 bg-yellow-50">
           <CardHeader>

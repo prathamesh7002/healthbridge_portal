@@ -57,7 +57,7 @@ export function AppHeader() {
   const profilePath = userRole ? `/${userRole}/profile` : '#';
 
   return (
-    <header className="flex h-14 items-center gap-2 sm:gap-4 border-b bg-card px-3 sm:px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30 md:bg-transparent md:border-none">
+    <header className="flex h-14 items-center gap-2 sm:gap-4 border-b bg-card px-3 sm:px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
       <div className="md:hidden">
         <SidebarTrigger />
       </div>

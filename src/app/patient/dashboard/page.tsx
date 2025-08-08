@@ -1,150 +1,259 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { StatCard } from '@/components/shared/stat-card';
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { ArrowUpRight, CalendarClock, Pill, FilePlus, PlusCircle, QrCode, Download, Copy as CopyIcon, Eye } from 'lucide-react';
+import { QrCode, CalendarPlus, FileText, Share2, X, Heart, Shield, Clock } from 'lucide-react';
 import Link from 'next/link';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { QRCodeCanvas } from "qrcode.react";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { QRCodeCanvas } from 'qrcode.react';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
-const demoAppointments = [
-    { id: 1, doctor: 'Dr. Demo', specialization: 'Cardiologist', date: '2024-08-15', time: '10:30 AM', status: 'Confirmed' },
-];
-
-const demoPrescriptions = [
-    { id: 1, doctor: 'Dr. Demo', date: '2024-07-20', details: 'Atorvastatin 20mg' },
-];
-
-const patientData = {
-  fullName: "John Doe",
-  age: 39,
-  gender: "Male",
-  bloodGroup: "O+",
-  contactNumber: "123-456-7890",
-  email: "john.doe@example.com",
-  address: "123 Main St, Springfield, USA",
-  patientId: "PAT005",
-};
-const qrString = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/patient/summary/${patientData.patientId}`;
+const patientId = "PAT005"; // Replace with real patient id if available
+const qrString = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/patient/summary/${patientId}`;
 
 export default function PatientDashboard() {
-    const [qrOpen, setQrOpen] = useState(false);
-    const [copied, setCopied] = useState(false);
-    const [upcomingAppointments, setUpcomingAppointments] = useState<typeof demoAppointments>([]);
-    const [recentPrescriptions, setRecentPrescriptions] = useState<typeof demoPrescriptions>([]);
-    const [isClient, setIsClient] = useState(false);
-    const qrRef = useRef<HTMLDivElement>(null);
+  const [qrOpen, setQrOpen] = useState(false);
+  const [qrKey, setQrKey] = useState(0); // To force QR re-generation
 
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-    
-    useEffect(() => {
-        if (isClient) {
-            const userEmail = localStorage.getItem('userEmail');
-            if (userEmail === 'patient@example.com') {
-                setUpcomingAppointments(demoAppointments);
-                setRecentPrescriptions(demoPrescriptions);
-            }
-        }
-    }, [isClient]);
+  const handleGenerateQR = () => {
+    setQrKey(prev => prev + 1); // Change key to force new QR
+    setQrOpen(true);
+  };
+
+  const handleCloseQR = () => {
+    setQrOpen(false);
+  };
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Upcoming Appointments" value={upcomingAppointments.length.toString()} icon={CalendarClock} description={upcomingAppointments.length > 0 ? "Next one in 3 days" : ""} />
-        <StatCard title="Total Prescriptions" value={recentPrescriptions.length.toString()} icon={Pill} />
-        <StatCard title="Lab Reports" value="1" icon={FilePlus} />
-        <Card className="flex flex-col justify-center items-center p-6 bg-primary/10 border-primary/20 border-dashed hover:border-primary/50 transition-colors">
-            <CardTitle className="text-primary/90 text-center mb-4 text-base font-semibold">Ready for your next check-up?</CardTitle>
-            <Button asChild className="shadow-lg hover:shadow-primary/30 transition-shadow">
-                <Link href="/patient/appointments"><PlusCircle className="mr-2 h-4 w-4" />Book Appointment</Link>
-            </Button>
-        </Card>
+    <div className="min-h-screen bg-background">
+      {/* Header Section with Enhanced Welcome */}
+      <div className="relative overflow-hidden bg-background border-b border-muted">
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-2xl mb-6">
+            <Heart className="h-8 w-8 text-primary" />
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 tracking-tight">
+            Welcome to Health Bridge
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Your comprehensive health companion. Seamlessly manage appointments, medical records, and health information sharing—all secured in one intelligent platform.
+          </p>
+          <div className="flex flex-wrap justify-center gap-6 mt-8">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Shield className="h-5 w-5" />
+              <span className="text-sm font-medium">HIPAA Compliant</span>
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Clock className="h-5 w-5" />
+              <span className="text-sm font-medium">24/7 Access</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-5">
-        <Card className="md:col-span-3">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Upcoming Appointments</CardTitle>
-            <Button asChild size="sm" variant="ghost">
-                <Link href="/patient/appointments">View All <ArrowUpRight className="h-4 w-4" /></Link>
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <ScrollArea className="w-full whitespace-nowrap rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Doctor</TableHead>
-                    <TableHead>Date & Time</TableHead>
-                    <TableHead className="text-right">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {upcomingAppointments.length > 0 ? (
-                      upcomingAppointments.map((apt) => (
-                      <TableRow key={apt.id}>
-                          <TableCell>
-                          <div className="font-medium">{apt.doctor}</div>
-                          <div className="text-sm text-muted-foreground">{apt.specialization}</div>
-                          </TableCell>
-                          <TableCell>{apt.date} at {apt.time}</TableCell>
-                          <TableCell className="text-right">
-                              <Badge variant="success">{apt.status}</Badge>
-                          </TableCell>
-                      </TableRow>
-                      ))
-                  ) : (
-                      <TableRow>
-                          <TableCell colSpan={3} className="h-24 text-center">
-                              No upcoming appointments.
-                          </TableCell>
-                      </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </ScrollArea>
-          </CardContent>
-        </Card>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
+        {/* Feature Cards Grid */}
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
+          {/* Book Appointment Card */}
+          <Card className="group hover:shadow-xl transition-all duration-300 border shadow-lg bg-card">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <CalendarPlus className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-bold text-foreground">Book Appointment</CardTitle>
+                  <div className="h-1 w-12 bg-primary rounded-full mt-1 opacity-30"></div>
+                </div>
+              </div>
+              <CardDescription className="text-muted-foreground leading-relaxed">
+                Schedule appointments with ease. Choose your preferred doctor, time slot, and receive instant confirmations with smart reminders.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full opacity-40"></div>
+                  <span>Real-time availability checking</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full opacity-40"></div>
+                  <span>Automated reminders and confirmations</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full opacity-40"></div>
+                  <span>Centralized appointment management</span>
+                </div>
+              </div>
+              <Button asChild size="lg" className="w-full">
+                <Link href="/patient/appointments">Book Appointment</Link>
+              </Button>
+            </CardContent>
+          </Card>
 
-        <Card className="md:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Recent Prescriptions</CardTitle>
-             <Button asChild size="sm" variant="ghost">
-                <Link href="/patient/prescriptions">View All <ArrowUpRight className="h-4 w-4" /></Link>
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-                {recentPrescriptions.length > 0 ? (
-                    recentPrescriptions.map((p) => (
-                        <div key={p.id} className="flex items-start gap-4">
-                            <div className="bg-primary/10 p-3 rounded-full">
-                                <Pill className="h-5 w-5 text-primary" />
-                            </div>
-                            <div className="flex-1">
-                                <p className="font-medium">{p.details}</p>
-                                <p className="text-sm text-muted-foreground">Prescribed by {p.doctor} on {p.date}</p>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <div className="text-center text-muted-foreground py-10">
-                        No recent prescriptions.
-                    </div>
-                )}
+          {/* Update Report Card */}
+          <Card className="group hover:shadow-xl transition-all duration-300 border shadow-lg bg-card">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <FileText className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-bold text-foreground">Update Medical Records</CardTitle>
+                  <div className="h-1 w-12 bg-primary rounded-full mt-1 opacity-30"></div>
+                </div>
+              </div>
+              <CardDescription className="text-muted-foreground leading-relaxed">
+                Keep your medical information current for optimal care. Upload reports, prescriptions, and notes seamlessly.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full opacity-40"></div>
+                  <span>Secure document upload and storage</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full opacity-40"></div>
+                  <span>Complete medical history access</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full opacity-40"></div>
+                  <span>Real-time care team synchronization</span>
+                </div>
+              </div>
+              <Button asChild size="lg" className="w-full">
+                <Link href="/patient/reports">Update Records</Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Share Report Card */}
+          <Card className="group hover:shadow-xl transition-all duration-300 border shadow-lg bg-card">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <Share2 className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-bold text-foreground">Share Health Reports</CardTitle>
+                  <div className="h-1 w-12 bg-primary rounded-full mt-1 opacity-30"></div>
+                </div>
+              </div>
+              <CardDescription className="text-muted-foreground leading-relaxed">
+                Securely share your complete medical history with healthcare providers and family members with full control.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full opacity-40"></div>
+                  <span>End-to-end encrypted sharing links</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full opacity-40"></div>
+                  <span>Granular access control permissions</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full opacity-40"></div>
+                  <span>Multi-format export capabilities</span>
+                </div>
+              </div>
+              <Button asChild size="lg" className="w-full">
+                <Link href="/patient/reports">Share Reports</Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Health Bridge QR Card */}
+          <Card className="group hover:shadow-xl transition-all duration-300 border shadow-lg bg-card">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <QrCode className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-bold text-foreground">Health Bridge QR</CardTitle>
+                  <div className="h-1 w-12 bg-primary rounded-full mt-1 opacity-30"></div>
+                </div>
+              </div>
+              <CardDescription className="text-muted-foreground leading-relaxed">
+                Generate secure, session-limited QR codes for instant health summary sharing with healthcare providers.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full opacity-40"></div>
+                  <span>Instant clinic check-in and record access</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full opacity-40"></div>
+                  <span>Privacy-first design—no paper trails</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full opacity-40"></div>
+                  <span>Universal Health Bridge compatibility</span>
+                </div>
+              </div>
+              <Button size="lg" className="w-full" onClick={handleGenerateQR}>
+                Generate QR Code
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* QR Modal with Theme-Aware Styling */}
+        <Dialog open={qrOpen} onOpenChange={open => { if (!open) handleCloseQR(); }}>
+          <DialogContent className="flex flex-col items-center justify-center max-w-sm w-full relative bg-card text-foreground border border-muted shadow-2xl">
+            <DialogTitle asChild>
+              <VisuallyHidden>Health Bridge QR Code</VisuallyHidden>
+            </DialogTitle>
+            <button
+              className="absolute top-4 right-4 text-muted-foreground hover:text-primary transition-colors"
+              onClick={handleCloseQR}
+              aria-label="Close QR"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <div className="flex items-center justify-center w-16 h-16 bg-primary/10 rounded-2xl shadow-lg mb-4">
+              <QrCode className="h-8 w-8 text-primary" />
             </div>
-          </CardContent>
-        </Card>
+            <h3 className="text-lg font-semibold text-foreground mb-2">Your Health Bridge QR</h3>
+            <div className="p-4 bg-background rounded-2xl shadow mb-4">
+              <QRCodeCanvas key={qrKey} value={qrString} size={200} />
+            </div>
+            <div className="text-sm text-muted-foreground text-center max-w-xs leading-relaxed">
+              Present this QR code at your appointment for instant check-in and secure access to your health records.
+              <div className="text-xs text-muted-foreground mt-2 italic">
+                *Code expires when this window is closed for your security
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Enhanced Footer */}
+        <footer className="py-12">
+          <div className="rounded-2xl p-8 text-center border border-muted bg-card shadow-lg">
+            <div className="flex justify-center items-center gap-2 mb-4">
+              <Heart className="h-5 w-5 text-primary" />
+              <span className="font-semibold text-foreground">Health Bridge</span>
+            </div>
+            <p className="text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              By using Health Bridge, you acknowledge our commitment to your privacy and security. 
+              Your health data is encrypted end-to-end and shared only with your explicit consent. 
+              Review our <span className="text-primary underline cursor-pointer">Terms & Conditions</span> and
+              <span className="text-primary underline cursor-pointer"> Privacy Policy</span> for complete details.
+            </p>
+            <div className="flex justify-center items-center gap-6 mt-4 text-xs text-muted-foreground">
+              <span>256-bit Encryption</span>
+              <span>HIPAA Compliant</span>
+              <span>SOC 2 Certified</span>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   );
 }
-
