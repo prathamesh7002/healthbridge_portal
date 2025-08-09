@@ -88,7 +88,7 @@ export function AppSidebarNav({ userRole }: { userRole: string }) {
                 >
                   <Link href={item.href}>
                     <item.icon className="h-4 w-4" />
-                    <span className="group-data-[collapsible=icon]:hidden">{item.name}</span>
+                    <span className="group-data-[collapsible=icon]:hidden max-w-[12rem] truncate">{item.name}</span>
                   </Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>

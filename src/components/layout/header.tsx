@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth-provider";
+// removed locale-based pathing
 
 function getPageTitleKey(pathname: string): string {
   const segments = pathname.split('/').filter(Boolean);
@@ -38,20 +39,30 @@ export function AppHeader() {
   }, [pathname]);
 
   const handleLogout = async () => {
-    await signOut();
-    router.push("/");
+    try {
+      console.log('Logging out...');
+      await signOut();
+      console.log('SignOut completed, redirecting...');
+      
+      router.push('/');
+      console.log('Redirected to:', '/');
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // Force redirect even if there's an error
+      router.push('/');
+    }
   };
 
   const settingsPath = userRole ? `/${userRole}/settings` : '#';
   const profilePath = userRole ? `/${userRole}/profile` : '#';
 
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30 md:bg-transparent md:border-none">
+    <header className="flex h-14 items-center gap-2 sm:gap-4 border-b bg-card px-3 sm:px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
       <div className="md:hidden">
         <SidebarTrigger />
       </div>
-      <div className="w-full flex-1">
-        <h1 className="text-lg font-semibold md:text-2xl font-headline">{tPage(titleKey as any)}</h1>
+      <div className="w-full flex-1 min-w-0">
+        <h1 className="truncate text-base sm:text-lg md:text-2xl font-semibold font-headline">{tPage(titleKey as any)}</h1>
       </div>
       <Button variant="outline" size="icon" className="h-9 w-9 relative rounded-full">
         <Bell className="h-4 w-4" />

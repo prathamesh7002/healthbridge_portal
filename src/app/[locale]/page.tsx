@@ -17,7 +17,7 @@ export default function LoginPage() {
   // Redirect authenticated users to their dashboard
   useEffect(() => {
     if (!loading && user && userRole) {
-      router.push(`/${locale}/${userRole}/dashboard`);
+      router.push(`/${userRole}/dashboard`);
     }
   }, [user, userRole, loading, router, locale]);
 
@@ -36,18 +36,18 @@ export default function LoginPage() {
   }
   
   return (
-    <div className="min-h-screen w-full lg:grid lg:grid-cols-2 bg-background">
+    <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-2 bg-background">
       {/* Left side - Login Form */}
       <div className="flex items-center justify-center p-6 sm:p-12">
         <div className="mx-auto w-full max-w-md space-y-8">
-          <div className="space-y-2 text-center">
+          <div className="space-y-4 text-center">
             <div className="flex justify-center">
               <div className="bg-primary/10 p-3 rounded-full">
                 <HeartPulse className="h-10 w-10 text-primary" />
               </div>
             </div>
-            <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-primary">{t('title')}</h1>
+            <p className="text-muted-foreground text-balance">
               {t('subtitle')}
             </p>
           </div>
