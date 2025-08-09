@@ -38,30 +38,56 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2 bg-background">
-      <div className="hidden bg-muted lg:block relative">
-        <Image
-          src="https://placehold.co/1080x1920.png"
-          alt="A modern hospital hallway"
-          data-ai-hint="hospital hallway"
-          fill
-          className="h-full w-full object-cover"
-        />
-         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
-      </div>
+      {/* Left side - Signup Form */}
       <div className="flex items-center justify-center p-6 sm:p-12">
-        <div className="mx-auto grid w-full max-w-md gap-8">
-          <div className="grid gap-4 text-center">
+        <div className="mx-auto w-full max-w-md space-y-8">
+          <div className="space-y-2 text-center">
             <div className="flex justify-center">
               <div className="bg-primary/10 p-3 rounded-full">
                 <HeartPulse className="h-10 w-10 text-primary" />
               </div>
             </div>
-            <h1 className="text-4xl font-bold font-headline text-primary">{t('title')}</h1>
-            <p className="text-balance text-muted-foreground">
-             {t('subtitle')}
+            <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+            <p className="text-muted-foreground">
+              {t('subtitle')}
             </p>
           </div>
           <SignupForm />
+        </div>
+      </div>
+      
+      {/* Right side - Image */}
+      <div className="hidden bg-muted lg:block relative overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center bg-[#f8fafc]">
+          <div className="relative w-full h-full">
+            <img 
+              src="/images/login-bg.png" 
+              alt="Signup Background"
+              className="w-full h-full object-contain"
+              style={{
+                objectFit: 'contain',
+                maxWidth: '100%',
+                maxHeight: '100%',
+                width: 'auto',
+                height: 'auto'
+              }}
+            />
+            {/* Overlay for better text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+            
+            {/* Welcome text */}
+            <div className="absolute inset-0 flex items-end p-12">
+              <div className="space-y-2">
+                <HeartPulse className="h-12 w-12 text-primary" />
+                <h2 className="text-3xl font-bold tracking-tight text-foreground">
+                  {t('title')}
+                </h2>
+                <p className="text-muted-foreground">
+                  {t('subtitle')}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
