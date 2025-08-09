@@ -34,6 +34,8 @@ A modern, secure, and intelligent web application designed to revolutionize pers
 ### 🏥 **Multi-Role Healthcare Platform**
 - **Patient Portal**: Book appointments, view prescriptions, upload reports, track health metrics
 - **Doctor Dashboard**: Manage appointments, patient records, availability scheduling
+- **Modern Timeline View**: Intuitive vertical timeline for medical records and prescriptions
+- **Secure File Uploads**: Easily upload and manage medical documents with preview capabilities
 
 
 ### 📅 **Smart Appointment System**
@@ -78,11 +80,14 @@ npm install
 # Set up environment variables
 cp .env.example .env.local
 
+# Create required directories
+mkdir -p public/uploads
+
 # Run the development server
 npm run dev
 ```
 
-Open [http://localhost:9002](http://localhost:9002) to view the application.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ### Demo Credentials
 - **Patient**: `patient@example.com` / `patient027`
@@ -113,6 +118,22 @@ Open [http://localhost:9002](http://localhost:9002) to view the application.
 - **TypeScript** - Static type checking
 
 ## 📸 Screenshots
+
+### 🖥️ Desktop View
+![Desktop View](/screenshots/desktop-view.png)
+*Modern, clean interface with the new timeline view*
+
+### 📱 Mobile View
+![Mobile View](/screenshots/mobile-view.png)
+*Fully responsive design that works on all devices*
+
+### 📤 Upload Dialog
+![Upload Dialog](/screenshots/upload-dialog.png)
+*Easy-to-use document upload interface*
+
+### 📄 Document Preview
+![Document Preview](/screenshots/document-preview.png)
+*View documents directly in the application*
 
 ### Login Screen
 ![Login Screen](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/loginscreen.png)
@@ -149,7 +170,7 @@ GOOGLE_AI_API_KEY=your_google_ai_key
 
 # Next.js Configuration
 NEXTAUTH_SECRET=your_nextauth_secret
-NEXTAUTH_URL=http://localhost:9002
+NEXTAUTH_URL=http://localhost:3000
 ```
 
 ### 3. Database Setup
