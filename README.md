@@ -115,7 +115,7 @@ Open [http://localhost:9002](http://localhost:9002) to view the application.
 ## 📸 Screenshots
 
 ### Login Screen
-![Login Screen](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/login-screen.png)
+![Login Screen](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/loginscreen.png)
 
 ### Dashboard Overview
 ![Dashboard](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/dashboard.png)
