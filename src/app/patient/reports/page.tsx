@@ -1,13 +1,16 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Upload, Download, Eye, FileText, FileSpreadsheet, Pill, Filter, Calendar, User } from "lucide-react";
+import { Upload, Download, Eye, FileText, FileSpreadsheet, Pill, Filter, Plus, Calendar, User } from "lucide-react";
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { format } from 'date-fns';
+import { UploadDialog } from "@/components/patient/upload-dialog";
+import { useToast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -186,87 +189,158 @@ export default function ReportsPage() {
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [filter, setFilter] = useState<'all' | 'report' | 'prescription'>('all');
   const [isClient, setIsClient] = useState(false);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
+  // Simulate loading data
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (isClient) {
+    const timer = setTimeout(() => {
+      setIsClient(true);
       const userEmail = localStorage.getItem('userEmail');
       if (userEmail === 'patient@example.com') {
         setEvents(demoEvents);
       }
-    }
-  }, [isClient]);
+      setIsLoading(false);
+    }, 800); // Simulate network delay
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredEvents = events.filter(event => 
     filter === 'all' || event.type === filter
   );
 
+  const handleUploadSuccess = (newEvent: TimelineEvent) => {
+    setEvents(prev => [newEvent, ...prev]);
+    toast({
+      title: 'Success',
+      description: 'Your document has been uploaded successfully.',
+    });
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-4 md:p-6 max-w-6xl">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <div className="flex flex-wrap gap-2 w-full md:w-auto">
+            <Skeleton className="h-10 w-24" />
+            <Skeleton className="h-10 w-24" />
+            <Skeleton className="h-10 w-24" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+        </div>
+        <div className="space-y-8">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex gap-4">
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+              <Skeleton className="h-8 w-24" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="animate-fade-in">
-      <Card>
-        <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="container mx-auto p-4 md:p-6 max-w-6xl">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div>
-            <CardTitle>Medical History</CardTitle>
-            <CardDescription>Your complete medical records and prescriptions in one place.</CardDescription>
+            <h1 className="text-2xl font-bold tracking-tight">Medical History</h1>
+            <p className="text-muted-foreground">
+              Your complete medical records and prescriptions in one place.
+            </p>
           </div>
-          <div className="flex w-full md:w-auto gap-2">
+          <div className="flex flex-wrap gap-2 w-full md:w-auto">
             <Tabs 
               value={filter} 
               onValueChange={(value) => setFilter(value as 'all' | 'report' | 'prescription')}
-              className="w-full md:w-auto"
+              className="w-full sm:w-auto"
             >
               <TabsList className="h-auto p-1">
-                <TabsTrigger value="all" className="px-3 py-1.5 text-sm">
+                <TabsTrigger value="all" className="px-3 py-1.5 text-xs sm:text-sm">
                   <Filter className="mr-1.5 h-3.5 w-3.5" />
                   All
                 </TabsTrigger>
-                <TabsTrigger value="report" className="px-3 py-1.5 text-sm">
+                <TabsTrigger value="report" className="px-3 py-1.5 text-xs sm:text-sm">
                   <FileSpreadsheet className="mr-1.5 h-3.5 w-3.5" />
-                  Reports
+                  <span className="hidden xs:inline">Reports</span>
+                  <span className="xs:hidden">Rpts</span>
                 </TabsTrigger>
-                <TabsTrigger value="prescription" className="px-3 py-1.5 text-sm">
+                <TabsTrigger value="prescription" className="px-3 py-1.5 text-xs sm:text-sm">
                   <Pill className="mr-1.5 h-3.5 w-3.5" />
-                  Prescriptions
+                  <span className="hidden xs:inline">Prescriptions</span>
+                  <span className="xs:hidden">Rx</span>
                 </TabsTrigger>
               </TabsList>
             </Tabs>
-            <Button className="gap-1.5">
-              <Upload className="h-4 w-4" />
+            <Button 
+              onClick={() => setIsUploadDialogOpen(true)}
+              className="gap-1.5 w-full sm:w-auto"
+            >
+              <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">Upload New</span>
+              <span className="sm:hidden">New</span>
             </Button>
           </div>
-        </CardHeader>
-        <CardContent>
-          <ScrollArea className="h-[calc(100vh-250px)] w-full pr-4">
-            <div className="relative max-w-4xl mx-auto py-4">
-              {filteredEvents.length > 0 ? (
-                filteredEvents.map((event, index) => (
-                  <TimelineEventCard 
-                    key={event.id} 
-                    event={event} 
-                    isEven={index % 2 === 0} 
-                  />
-                ))
-              ) : (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <FileText className="h-12 w-12 text-muted-foreground/50 mb-4" />
-                  <h3 className="text-lg font-medium text-muted-foreground">
-                    No {filter === 'all' ? 'medical records' : filter === 'report' ? 'reports' : 'prescriptions'} found
-                  </h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {filter === 'all' 
-                      ? 'Your medical history will appear here.' 
-                      : `No ${filter === 'report' ? 'reports' : 'prescriptions'} found.`}
-                  </p>
-                </div>
-              )}
-            </div>
-          </ScrollArea>
-        </CardContent>
-      </Card>
+        </div>
+
+        <Card className="overflow-hidden">
+          <CardContent className="p-0">
+            <ScrollArea className="h-[calc(100vh-220px)] w-full">
+              <div className="relative max-w-4xl mx-auto p-4 sm:p-6">
+                {filteredEvents.length > 0 ? (
+                  <div className="space-y-8">
+                    {filteredEvents.map((event, index) => (
+                      <TimelineEventCard 
+                        key={event.id} 
+                        event={event} 
+                        isEven={index % 2 === 0} 
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <FileText className="h-16 w-16 text-muted-foreground/30 mb-4" />
+                    <h3 className="text-lg font-medium text-muted-foreground">
+                      No {filter === 'all' ? 'medical records' : filter === 'report' ? 'reports' : 'prescriptions'} found
+                    </h3>
+                    <p className="text-sm text-muted-foreground mt-2 max-w-md">
+                      {filter === 'all' 
+                        ? 'You don\'t have any medical records yet. Upload your first document to get started.' 
+                        : `You don't have any ${filter === 'report' ? 'reports' : 'prescriptions'} yet.`}
+                    </p>
+                    <Button 
+                      onClick={() => setIsUploadDialogOpen(true)}
+                      className="mt-6 gap-1.5"
+                    >
+                      <Upload className="h-4 w-4" />
+                      Upload Your First Document
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+
+        {/* Upload Dialog */}
+        <UploadDialog 
+          open={isUploadDialogOpen}
+          onOpenChange={setIsUploadDialogOpen}
+          onUploadSuccess={handleUploadSuccess}
+        />
+      </div>
     </div>
   );
 }
