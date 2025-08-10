@@ -1,21 +1,23 @@
 "use client"
+import { useState } from 'react';
 import { StatCard } from '@/components/shared/stat-card';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Users, Stethoscope, Clock, FileText, ArrowUpRight, MessageCircle, Calendar, Phone, MapPin, CheckCircle, Clock as ClockIcon, AlertCircle } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Users, Stethoscope, Clock, FileText, ArrowUpRight, MessageCircle, Calendar, Phone, MapPin, CheckCircle, Clock as ClockIcon, AlertCircle, X, Globe } from 'lucide-react';
 import Link from 'next/link';
 
 // Mock WhatsApp appointments data (replace with actual data from your WhatsApp integration)
-const whatsappAppointments = [
+const initialWhatsAppAppointments = [
   {
     id: 'WA001',
     patientName: 'राजेश कुमार / Rajesh Kumar',
     phoneNumber: '+91 98765 43210',
     time: '10:30 AM',
     date: '2024-01-15',
-    status: 'confirmed',
+    status: 'new',
     reason: 'Follow-up consultation',
     doctor: 'Dr. Verma',
     clinic: 'Shanti Clinic',
@@ -28,7 +30,7 @@ const whatsappAppointments = [
     phoneNumber: '+91 87654 32109',
     time: '11:00 AM',
     date: '2024-01-15',
-    status: 'pending',
+    status: 'new',
     reason: 'General checkup',
     doctor: 'Dr. Verma',
     clinic: 'Shanti Clinic',
@@ -54,7 +56,7 @@ const whatsappAppointments = [
     phoneNumber: '+91 65432 10987',
     time: '3:00 PM',
     date: '2024-01-15',
-    status: 'pending',
+    status: 'new',
     reason: 'Diabetes management',
     doctor: 'Dr. Verma',
     clinic: 'Shanti Clinic',
@@ -69,6 +71,8 @@ const upcomingAppointments = [
 
 const getStatusBadge = (status: string) => {
   switch (status) {
+    case 'new':
+      return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100"><MessageCircle className="w-3 h-3 mr-1" />New</Badge>;
     case 'confirmed':
       return <Badge className="bg-green-100 text-green-800 hover:bg-green-100"><CheckCircle className="w-3 h-3 mr-1" />Confirmed</Badge>;
     case 'pending':
@@ -94,13 +98,61 @@ const getLanguageLabel = (language: string) => {
 };
 
 export default function DoctorDashboard() {
+  const [whatsappAppointments, setWhatsAppAppointments] = useState(initialWhatsAppAppointments);
+  const [selectedLanguage, setSelectedLanguage] = useState('en');
+  const [filterStatus, setFilterStatus] = useState('all');
+
+  const handleAcceptAppointment = (appointmentId: string) => {
+    setWhatsAppAppointments(prev => 
+      prev.map(apt => 
+        apt.id === appointmentId 
+          ? { ...apt, status: 'confirmed' as const }
+          : apt
+      )
+    );
+  };
+
+  const handleRejectAppointment = (appointmentId: string) => {
+    setWhatsAppAppointments(prev => 
+      prev.map(apt => 
+        apt.id === appointmentId 
+          ? { ...apt, status: 'cancelled' as const }
+          : apt
+      )
+    );
+  };
+
+  const filteredAppointments = filterStatus === 'all' 
+    ? whatsappAppointments 
+    : whatsappAppointments.filter(apt => apt.status === filterStatus);
+
+  const newAppointmentsCount = whatsappAppointments.filter(apt => apt.status === 'new').length;
+  const confirmedAppointmentsCount = whatsappAppointments.filter(apt => apt.status === 'confirmed').length;
+
   return (
     <div className="space-y-8 animate-fade-in">
+      {/* Language Selector */}
+      <div className="flex justify-end">
+        <div className="flex items-center gap-2">
+          <Globe className="w-4 h-4 text-muted-foreground" />
+          <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+            <SelectTrigger className="w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="en">English</SelectItem>
+              <SelectItem value="hi">हिंदी</SelectItem>
+              <SelectItem value="mr">मराठी</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Today's Appointments" value="4" icon={Stethoscope} description="+2 from yesterday" />
-        <StatCard title="WhatsApp Bookings" value="4" icon={MessageCircle} description="All confirmed" />
-        <StatCard title="Total Assigned Patients" value="12" icon={Users} description="+3 this month"/>
-        <StatCard title="Avg. Consultation Time" value="25 min" icon={Clock} />
+        <StatCard title="New Appointments" value={newAppointmentsCount.toString()} icon={MessageCircle} description="Awaiting confirmation" />
+        <StatCard title="Confirmed Today" value={confirmedAppointmentsCount.toString()} icon={Stethoscope} description="Ready for consultation" />
+        <StatCard title="Total Patients" value="12" icon={Users} description="+3 this month"/>
+        <StatCard title="Avg. Consultation" value="25 min" icon={Clock} />
       </div>
 
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -108,56 +160,99 @@ export default function DoctorDashboard() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>WhatsApp Appointments</CardTitle>
-                <CardDescription>Today's appointments booked via WhatsApp</CardDescription>
+                <CardTitle>New Appointments</CardTitle>
+                <CardDescription>Appointments from WhatsApp that need your attention</CardDescription>
               </div>
-              <Button variant="outline" size="sm">
-                <MessageCircle className="w-4 h-4 mr-2" />
-                View All
-              </Button>
+              <div className="flex items-center gap-2">
+                <Select value={filterStatus} onValueChange={setFilterStatus}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="new">New</SelectItem>
+                    <SelectItem value="confirmed">Confirmed</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button variant="outline" size="sm">
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  View All
+                </Button>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {whatsappAppointments.map((apt) => (
-              <div key={apt.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={`https://placehold.co/48x48.png?text=${apt.patientName.split(' ')[0][0]}`} alt={apt.patientName} />
-                  <AvatarFallback>{apt.patientName.split(' ')[0][0]}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <p className="text-sm font-medium leading-none truncate">{apt.patientName}</p>
-                    {getStatusBadge(apt.status)}
-                    <Badge variant="outline" className="text-xs">{getLanguageLabel(apt.language)}</Badge>
-                  </div>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {apt.time}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Phone className="w-3 h-3" />
-                      {apt.phoneNumber}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3" />
-                      {apt.clinic}
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">{apt.reason}</p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Button size="sm" variant="outline">
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    Confirm
-                  </Button>
-                  <Button size="sm" variant="ghost">
-                    <MessageCircle className="w-3 h-3 mr-1" />
-                    Message
-                  </Button>
-                </div>
+            {filteredAppointments.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>No appointments found</p>
               </div>
-            ))}
+            ) : (
+              filteredAppointments.map((apt) => (
+                <div key={apt.id} className={`flex items-center gap-4 p-4 border rounded-lg transition-colors ${
+                  apt.status === 'new' ? 'bg-blue-50 border-blue-200' : 
+                  apt.status === 'confirmed' ? 'bg-green-50 border-green-200' :
+                  apt.status === 'cancelled' ? 'bg-red-50 border-red-200' :
+                  'hover:bg-muted/50'
+                }`}>
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={`https://placehold.co/48x48.png?text=${apt.patientName.split(' ')[0][0]}`} alt={apt.patientName} />
+                    <AvatarFallback>{apt.patientName.split(' ')[0][0]}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="text-sm font-medium leading-none truncate">{apt.patientName}</p>
+                      {getStatusBadge(apt.status)}
+                      <Badge variant="outline" className="text-xs">{getLanguageLabel(apt.language)}</Badge>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {apt.time}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Phone className="w-3 h-3" />
+                        {apt.phoneNumber}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3" />
+                        {apt.clinic}
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">{apt.reason}</p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    {apt.status === 'new' && (
+                      <>
+                        <Button 
+                          size="sm" 
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                          onClick={() => handleAcceptAppointment(apt.id)}
+                        >
+                          <CheckCircle className="w-3 h-3 mr-1" />
+                          Accept
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="destructive"
+                          onClick={() => handleRejectAppointment(apt.id)}
+                        >
+                          <X className="w-3 h-3 mr-1" />
+                          Reject
+                        </Button>
+                      </>
+                    )}
+                    {apt.status === 'confirmed' && (
+                      <Button size="sm" variant="outline">
+                        <MessageCircle className="w-3 h-3 mr-1" />
+                        Message
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
           </CardContent>
           <CardFooter>
             <Button asChild className="w-full">
