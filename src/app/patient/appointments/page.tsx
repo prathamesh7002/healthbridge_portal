@@ -26,6 +26,19 @@ const appointmentSchema = z.object({
 
 type AppointmentFormValues = z.infer<typeof appointmentSchema>;
 
+import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { HeartPulse, Stethoscope, Bone, Baby, Info } from 'lucide-react';
+
+const specializationIcons: Record<string, React.ReactNode> = {
+  cardiology: <HeartPulse className="h-4 w-4 text-red-500" />,
+  dermatology: <Stethoscope className="h-4 w-4 text-green-500" />,
+  orthopedics: <Bone className="h-4 w-4 text-blue-500" />,
+  pediatrics: <Baby className="h-4 w-4 text-yellow-500" />,
+};
+
 const specializations = [
   { id: 'cardiology', name: 'Cardiology' },
   { id: 'dermatology', name: 'Dermatology' },
@@ -70,11 +83,14 @@ export default function BookAppointmentPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in">
       {/* WhatsApp Booking Section */}
-      <Card className="mb-12 bg-card border shadow-lg">
+      <Card className="mb-12 border bg-card shadow-md">
         <div className="flex flex-col md:flex-row items-center gap-8 p-6">
           {/* Details Left */}
           <div className="flex-1 w-full">
-            <CardTitle className="text-2xl font-bold mb-2 text-foreground">Book via WhatsApp</CardTitle>
+            <CardTitle className="text-2xl font-bold mb-2 text-foreground flex items-center gap-2">
+              <Image src="/whatsapp.jpg" alt="WhatsApp" width={32} height={32} className="rounded-full border border-muted" />
+              Book via WhatsApp
+            </CardTitle>
             <CardDescription className="mb-4 text-base text-muted-foreground">
               Prefer chatting? Book your appointment directly through WhatsApp for a seamless, conversational experience. Our assistant will guide you step-by-step and confirm your slot instantly.
             </CardDescription>
@@ -93,17 +109,20 @@ export default function BookAppointmentPage() {
           </div>
           {/* Image Right */}
           <div className="flex-1 w-full flex justify-center">
-            <img
+            <Image
               src="/whatsapp.jpg"
               alt="Book appointment via WhatsApp"
-              width={340}
-              height={340}
-              className="rounded-xl shadow-md object-cover max-w-xs w-full h-auto border border-muted"
-              style={{ maxWidth: '340px', height: 'auto' }}
+              width={220}
+              height={220}
+              className="rounded-xl shadow object-cover max-w-xs w-full h-auto border border-muted"
+              style={{ maxWidth: '220px', height: 'auto' }}
+              priority
+              quality={90}
             />
           </div>
         </div>
       </Card>
+      <Separator className="my-10" />
 
       {/* WhatsApp Consent Modal */}
       <Dialog open={waModalOpen} onOpenChange={setWaModalOpen}>
@@ -137,15 +156,21 @@ export default function BookAppointmentPage() {
 
       {/* Regular Appointment Form */}
       <Card>
-        <CardHeader>
-          <CardTitle>Book a New Appointment</CardTitle>
-          <CardDescription>Find a doctor and schedule your next visit in a few simple steps.</CardDescription>
+        <CardHeader className="bg-gradient-to-r from-blue-50/80 to-white rounded-t-lg border-b border-muted p-8 flex flex-col gap-2">
+          <CardTitle className="text-2xl font-bold text-blue-900 flex items-center gap-2">
+            <Stethoscope className="h-6 w-6 text-blue-400" />
+            Appointment Details
+          </CardTitle>
+          <CardDescription className="text-base text-muted-foreground font-medium">
+            Find a doctor and schedule your next visit in a few simple steps.
+          </CardDescription>
         </CardHeader>
-        <CardContent>
+        <Separator />
+        <CardContent className="py-8 px-2 md:px-8">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
+              <div className="grid md:grid-cols-2 gap-12">
+                <div className="space-y-8">
                   <FormField
                     control={form.control}
                     name="specialization"
@@ -163,7 +188,14 @@ export default function BookAppointmentPage() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {specializations.map(spec => <SelectItem key={spec.id} value={spec.id}>{spec.name}</SelectItem>)}
+                            {specializations.map(spec => (
+                              <SelectItem key={spec.id} value={spec.id}>
+                                <span className="flex items-center gap-2">
+                                  {specializationIcons[spec.id]}
+                                  {spec.name}
+                                </span>
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -183,7 +215,17 @@ export default function BookAppointmentPage() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {selectedSpec && doctors[selectedSpec].map(doc => <SelectItem key={doc.id} value={doc.name}>{doc.name}</SelectItem>)}
+                            {selectedSpec && doctors[selectedSpec].map(doc => (
+                              <SelectItem key={doc.id} value={doc.name}>
+                                <span className="flex items-center gap-3">
+                                  <Avatar className="h-7 w-7">
+                                    <AvatarFallback>{doc.name.split(' ').map(n => n[0]).join('').slice(0,2)}</AvatarFallback>
+                                  </Avatar>
+                                  <span>{doc.name}</span>
+                                  <Badge variant="secondary" className="ml-2">{specializations.find(s => s.id === selectedSpec)?.name}</Badge>
+                                </span>
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -247,12 +289,14 @@ export default function BookAppointmentPage() {
                   </FormItem>
                 )}
               />
-              <div className="flex justify-end">
-                <Button type="submit" size="lg">Book Appointment</Button>
-              </div>
             </form>
           </Form>
         </CardContent>
+        <Separator />
+        <div className="sticky bottom-0 left-0 w-full bg-card rounded-b-lg z-10 p-4 flex flex-col md:flex-row md:justify-end gap-3 border-t border-muted shadow-inner">
+          <span className="text-xs text-muted-foreground md:mr-auto md:mt-2">Ready to book? Click below to confirm your appointment details.</span>
+          <Button type="submit" size="lg" className="w-full md:w-auto font-semibold text-base py-3 px-8">Book Appointment</Button>
+        </div>
       </Card>
     </div>
   );
