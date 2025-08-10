@@ -132,7 +132,7 @@ export default function DoctorDashboard() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Language Selector */}
-      <div className="flex justify-end">
+      {/* <div className="flex justify-end">
         <div className="flex items-center gap-2">
           <Globe className="w-4 h-4 text-muted-foreground" />
           <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
@@ -146,7 +146,7 @@ export default function DoctorDashboard() {
             </SelectContent>
           </Select>
         </div>
-      </div>
+      </div> */}
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard title="New Appointments" value={newAppointmentsCount.toString()} icon={MessageCircle} description="Awaiting confirmation" />
