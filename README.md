@@ -150,6 +150,10 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 ### Patient Portal
 ![Patient Portal](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/patient.png)
 
+### WhatsApp Integration
+![WhatsApp Integration](https://raw.githubusercontent.com/yogendra-08/healthbridge_portal/main/public/whatsapp.jpg)
+*Seamless appointment booking through WhatsApp with multi-language support*
+
 ## 🔧 Installation
 
 ### 1. Environment Setup
