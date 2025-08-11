@@ -15,6 +15,7 @@ import { Clock } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import whatsappImage from './whatsapp.jpg';
 
 const appointmentSchema = z.object({
   specialization: z.string({ required_error: 'Please select a specialization.' }),
@@ -93,14 +94,14 @@ export default function BookAppointmentPage() {
           </div>
           {/* Image Right */}
           <div className="flex-1 w-full flex justify-center">
-            <img
-              src="/whatsapp.jpg"
-              alt="Book appointment via WhatsApp"
-              width={340}
-              height={340}
-              className="rounded-xl shadow-md object-cover max-w-xs w-full h-auto border border-muted"
-              style={{ maxWidth: '340px', height: 'auto' }}
-            />
+            <div className="relative w-full max-w-xs h-[340px] rounded-xl overflow-hidden shadow-md border border-muted">
+              <Image
+                src={whatsappImage}
+                alt="Book appointment via WhatsApp"
+                className="w-full h-full object-cover"
+                priority
+              />
+            </div>
           </div>
         </div>
       </Card>
