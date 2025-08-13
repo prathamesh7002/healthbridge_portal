@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -14,13 +14,17 @@ import {
   FileSpreadsheet, 
   FileText as FileTextIcon, 
   Filter, 
+  FileText,
+  HelpCircle,
   Loader2, 
+  Pill,
   Plus, 
   Search, 
   Upload, 
   User, 
   X 
 } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 // UI Components
 import { Button } from '@/components/ui/button';
@@ -66,7 +70,23 @@ import { ReportsLoading } from './components/loading';
 import { PageHelp } from './components/page-help';
 import { UploadDialog } from './components/upload-dialog';
 
-// Form validation schema
+// Type definitions
+type TimelineEventType = 'report' | 'prescription';
+
+interface TimelineEvent {
+  id: string;
+  title: string;
+  type: TimelineEventType;
+  date: Date;
+  uploadedBy: string;
+  description: string;
+  doctorNotes?: string;
+  fileUrl?: string;
+}
+
+type FilterValues = z.infer<typeof filterSchema>;
+
+// Form validation schema and type definitions
 const filterSchema = z.object({
   type: z.enum(['all', 'report', 'prescription']).default('all'),
   search: z.string().optional(),
@@ -74,7 +94,6 @@ const filterSchema = z.object({
   dateTo: z.string().optional()
 });
 
-// Type definitions
 type TimelineEvent = {
   id: string;
   title: string;
@@ -86,8 +105,6 @@ type TimelineEvent = {
   fileUrl?: string;
 };
 
-type FilterValues = z.infer<typeof filterSchema>;
-
 interface TimelineEventCardProps {
   event: TimelineEvent;
   onView: (event: TimelineEvent) => void;
@@ -95,40 +112,49 @@ interface TimelineEventCardProps {
 }
 
 const TimelineEventCard = ({ event, onView, isEven = false }: TimelineEventCardProps) => {
+  // State for dialog and loading
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  const isImage = event.fileUrl?.match(/\.(jpeg|jpg|gif|png)$/i);
-  const isPDF = event.fileUrl?.toLowerCase().endsWith('.pdf');
+  // Safely access event properties with fallbacks
+  const fileUrl = event?.fileUrl || '';
+  const isImage = fileUrl ? fileUrl.match(/\.(jpeg|jpg|gif|png)$/i) !== null : false;
+  const isPDF = fileUrl ? fileUrl.toLowerCase().endsWith('.pdf') : false;
 
   const handleViewDocument = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!fileUrl) return;
+    
     if (isPDF || !isImage) {
-      window.open(event.fileUrl, '_blank');
+      window.open(fileUrl, '_blank');
     } else if (isImage) {
       setIsViewerOpen(true);
     }
   };
 
   const handleDownload = () => {
-    if (!event.fileUrl) return;
+    if (!fileUrl) return;
     
     setIsLoading(true);
-    fetch(event.fileUrl)
+    fetch(fileUrl)
       .then(response => response.blob())
       .then(blob => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${event.title.replace(/\s+/g, '_')}_${format(event.date, 'yyyy-MM-dd')}${isPDF ? '.pdf' : '.jpg'}`;
+        a.download = `${event?.title?.replace(/\s+/g, '_') || 'document'}_${format(new Date(), 'yyyy-MM-dd')}${isPDF ? '.pdf' : isImage ? '.jpg' : ''}`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
       })
       .catch(error => {
-        toast({ title: 'Error', description: 'Failed to download the file. Please try again.', variant: 'destructive' });
+        toast({ 
+          title: 'Error', 
+          description: 'Failed to download the file. Please try again.', 
+          variant: 'destructive' 
+        });
       })
       .finally(() => {
         setIsLoading(false);
@@ -202,69 +228,125 @@ const TimelineEventCard = ({ event, onView, isEven = false }: TimelineEventCardP
                 <div className="flex gap-2">
                   {event.fileUrl && (
                     <Button 
-                      variant="outline" 
+                      variant="ghost" 
                       size="sm" 
-                      className="gap-1.5 text-xs" 
+                      className="h-8 px-2"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleViewDocument(e);
                       }}
                     >
-                      <Eye className="h-3.5 w-3.5" />
-                      <span>{isPDF ? 'View PDF' : isImage ? 'View' : 'View'}</span>
+                      <Eye className="h-4 w-4 mr-1" />
+                      View
                     </Button>
                   )}
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="gap-1.5 text-xs"
+                    className="h-8 px-2"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onView(event);
+                      handleDownload();
                     }}
+                    disabled={isLoading || !event.fileUrl}
                   >
-                    <FileTextIcon className="h-3.5 w-3.5" />
-                    <span>Details</span>
+                    {isLoading ? (
+                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                    ) : (
+                      <Download className="h-4 w-4 mr-1" />
+                    )}
+                    Download
                   </Button>
                 </div>
               </div>
             </CardContent>
+          </Card>
+        </div>
+      </div>
+      
+      {/* Document Viewer Dialog */}
+      <Dialog open={isViewerOpen} onOpenChange={setIsViewerOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>{event.title}</DialogTitle>
+            <DialogDescription>
+              {format(event.date, 'PPP')} • {event.type}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="relative h-[70vh] w-full">
+            {isImage && event.fileUrl && (
+              <Image
+                src={event.fileUrl}
+                alt={event.title}
+                fill
+                className="object-contain"
+              />
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsViewerOpen(false)}>
+              Close
+            </Button>
+            <Button onClick={handleDownload} disabled={isLoading}>
+              {isLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="mr-2 h-4 w-4" />
+              )}
+              Download
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Event Details Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <div className={`h-2 w-2 rounded-full ${
+                event.type === 'report' ? 'bg-blue-500' : 'bg-green-500'
+              }`} />
+              <DialogTitle className="capitalize">
+                {event.type}: {event.title}
+              </DialogTitle>
+            </div>
+            <DialogDescription>
+              Added on {format(event.date, 'PPPp')}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div>
+              <h4 className="text-sm font-medium text-muted-foreground mb-1">Description</h4>
+              <p className="text-sm">{event.description}</p>
+            </div>
+            
+            {event.doctorNotes && (
+              <div>
+                <h4 className="text-sm font-medium text-muted-foreground mb-1">Doctor's Notes</h4>
+                <p className="text-sm">{event.doctorNotes}</p>
+              </div>
+            )}
             
             {event.fileUrl && (
-              <div className="space-y-2">
-                <h4 className="font-medium">Document</h4>
-                <div 
-                  className="flex items-center gap-2 p-3 border rounded-md hover:bg-muted/50 cursor-pointer"
-                  onClick={handleViewDocument}
-                >
-                  <div className="flex-shrink-0 p-2 rounded-full bg-muted">
-                    {isPDF ? (
-                      <FileTextIcon className="h-5 w-5 text-red-500" />
-                    ) : isImage ? (
-                      <Image 
-                        src={event.fileUrl}
-                        alt="Document preview"
-                        width={40}
-                        height={40}
-                        className="h-10 w-10 rounded object-cover"
-                        unoptimized
-                      />
-                    ) : (
-                      <FileTextIcon className="h-5 w-5 text-muted-foreground" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {event.title}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {isPDF ? 'PDF Document' : isImage ? 'Image' : 'File'}
-                    </p>
-                  </div>
+              <div>
+                <h4 className="text-sm font-medium text-muted-foreground mb-2">Document</h4>
+                <div className="flex items-center gap-2">
                   <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-8 w-8"
+                    variant="outline" 
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleViewDocument(e);
+                    }}
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    View Document
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDownload();
@@ -272,27 +354,237 @@ const TimelineEventCard = ({ event, onView, isEven = false }: TimelineEventCardP
                     disabled={isLoading}
                   >
                     {isLoading ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     ) : (
-                      <Download className="h-4 w-4" />
+                      <Download className="h-4 w-4 mr-2" />
                     )}
+                    Download
                   </Button>
                 </div>
               </div>
             )}
-          </Card>
+          </div>
           
-          {/* Document Dialog */}
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <DialogTitle>{event.title}</DialogTitle>
-                    <DialogDescription>
-                      {format(event.date, 'MMMM d, yyyy • h:mm a')} • {event.uploadedBy}
-                    </DialogDescription>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+      
+      {/* Dot */}
+      <div className={`
+        absolute left-0 top-6 -ml-2 h-4 w-4 rounded-full border-4 border-background z-10
+        ${event.type === 'report' ? 'bg-blue-500' : 'bg-green-500'}
+        group-hover:scale-125 transition-transform duration-200
+      `} />
+      
+      <div className={`
+        relative mb-12 flex flex-col sm:flex-row items-start gap-4
+        ${isEven ? 'sm:flex-row-reverse' : ''}
+      `}>
+        <div className={`
+          w-full sm:w-[calc(50%-2rem)] mt-6
+          ${isEven ? 'sm:mr-8' : 'sm:ml-8'}
+        `}>
+          <Card 
+            className="overflow-hidden transition-all hover:shadow-md hover:border-primary/20 cursor-pointer"
+            onClick={() => setIsDialogOpen(true)}
+          >
+            <CardHeader className="p-4 pb-2">
+              <div className="flex items-start justify-between gap-2">
+                <div className="space-y-1">
+                  <CardTitle className="text-base font-medium line-clamp-1">
+                    {event.title}
+                  </CardTitle>
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <User className="mr-1.5 h-3.5 w-3.5" />
+                    {event.uploadedBy}
                   </div>
+                </div>
+                <div className={`flex h-6 w-6 items-center justify-center rounded-full ${
+                  event.type === 'report' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'
+                }`}>
+                  {event.type === 'report' ? (
+                    <FileSpreadsheet className="h-3.5 w-3.5" />
+                  ) : (
+                    <FileTextIcon className="h-3.5 w-3.5" />
+                  )}
+                </div>
+              </div>
+              <CardDescription className="line-clamp-2 text-sm mt-2">
+                {event.description}
+              </CardDescription>
+            </CardHeader>
+            
+            <CardContent className="p-4 pt-0">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <Calendar className="mr-1.5 h-3.5 w-3.5" />
+                  {format(event.date, 'h:mm a')}
+                </div>
+                <div className="flex gap-2">
+                  {event.fileUrl && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 px-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewDocument(e);
+                      }}
+                    >
+                      <Eye className="h-4 w-4 mr-1" />
+                      View
+                    </Button>
+                  )}
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="h-8 px-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDownload();
+                    }}
+                    disabled={isLoading || !event.fileUrl}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                    ) : (
+                      <Download className="h-4 w-4 mr-1" />
+                    )}
+                    Download
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+      
+      {/* Document Viewer Dialog */}
+      <Dialog open={isViewerOpen} onOpenChange={setIsViewerOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>{event.title}</DialogTitle>
+            <DialogDescription>
+              {format(event.date, 'PPP')} • {event.type}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="relative h-[70vh] w-full">
+            {isImage && event.fileUrl && (
+              <Image
+                src={event.fileUrl}
+                alt={event.title}
+                fill
+                className="object-contain"
+              />
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsViewerOpen(false)}>
+              Close
+            </Button>
+            <Button onClick={handleDownload} disabled={isLoading}>
+              {isLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="mr-2 h-4 w-4" />
+              )}
+              Download
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Event Details Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <div className={`h-2 w-2 rounded-full ${
+                event.type === 'report' ? 'bg-blue-500' : 'bg-green-500'
+              }`} />
+              <DialogTitle className="capitalize">
+                {event.type}: {event.title}
+              </DialogTitle>
+            </div>
+            <DialogDescription>
+              Added on {format(event.date, 'PPPp')}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div>
+              <h4 className="text-sm font-medium text-muted-foreground mb-1">Description</h4>
+              <p className="text-sm">{event.description}</p>
+            </div>
+            
+            {event.doctorNotes && (
+              <div>
+                <h4 className="text-sm font-medium text-muted-foreground mb-1">Doctor's Notes</h4>
+                <p className="text-sm">{event.doctorNotes}</p>
+              </div>
+            )}
+            
+            {event.fileUrl && (
+              <div>
+                <h4 className="text-sm font-medium text-muted-foreground mb-2">Document</h4>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleViewDocument(e);
+                    }}
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    View Document
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDownload();
+                    }}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Download className="h-4 w-4 mr-2" />
+                    )}
+                    Download
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+      
+      {/* Document Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <DialogTitle>{event.title}</DialogTitle>
+                <DialogDescription>
+                  {format(event.date, 'MMMM d, yyyy • h:mm a')} • {event.uploadedBy}
+                </DialogDescription>
+              </div>
                   <Button 
                     variant="ghost" 
                     size="icon" 
@@ -377,15 +669,7 @@ const TimelineEventCard = ({ event, onView, isEven = false }: TimelineEventCardP
 const sampleImageUrl = 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80';
 const samplePdfUrl = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
 
-// Validation schema for filter form
-const filterSchema = z.object({
-  search: z.string(),
-  type: z.enum(['all', 'report', 'prescription']),
-  dateFrom: z.string(),
-  dateTo: z.string(),
-  uploadedBy: z.string(),
-});
-
+// Filter values type for the form
 type FilterValues = z.infer<typeof filterSchema>;
 
 // Sample data for demo
@@ -443,125 +727,111 @@ const demoEvents: TimelineEvent[] = [
 ];
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-      
-      {/* Document Details Dialog */}
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
-          <DialogHeader>
-            <div className="flex items-center gap-2">
-              {event.type === 'report' ? (
-                <FileSpreadsheet className="h-5 w-5 text-blue-500" />
-              ) : (
-                <Pill className="h-5 w-5 text-green-500" />
-              )}
-              <DialogTitle>{event.title}</DialogTitle>
-            </div>
-            <DialogDescription>
-              <div className="flex items-center gap-4 pt-1 text-sm">
-                <div className="flex items-center">
-                  <Calendar className="mr-1.5 h-3.5 w-3.5" />
-                  {format(event.date, 'MMMM d, yyyy • h:mm a')}
-                </div>
-                <div className="flex items-center">
-                  <User className="mr-1.5 h-3.5 w-3.5" />
-                  {event.uploadedBy}
-                </div>
-              </div>
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid gap-6 py-4 overflow-y-auto">
-            {event.doctorNotes && (
-              <div className="space-y-2">
-                <h4 className="font-medium">Doctor's Notes</h4>
-                <div className="rounded-md bg-muted/50 p-4 text-sm">
-                  {event.doctorNotes}
-                </div>
-              </div>
             )}
-            
+            <DialogTitle>{event.title}</DialogTitle>
+          </div>
+          <DialogDescription>
+            <div className="flex items-center gap-4 pt-1 text-sm">
+              <div className="flex items-center">
+                <Calendar className="mr-1.5 h-3.5 w-3.5" />
+                {format(event.date, 'MMMM d, yyyy • h:mm a')}
+              </div>
+              <div className="flex items-center">
+                <User className="mr-1.5 h-3.5 w-3.5" />
+                {event.uploadedBy}
+              </div>
+            </div>
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="grid gap-6 py-4 overflow-y-auto">
+          {event.doctorNotes && (
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <h4 className="font-medium">Document</h4>
-                {event.fileUrl && (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="gap-1.5 text-xs"
-                    onClick={() => {
-                      if (isPDF) {
+              <h4 className="font-medium">Doctor's Notes</h4>
+              <div className="rounded-md bg-muted/50 p-4 text-sm">
+                {event.doctorNotes}
+              </div>
+            </div>
+          )}
+            
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h4 className="font-medium">Document</h4>
+              {event.fileUrl && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="gap-1.5 text-xs"
+                  onClick={() => {
+                    if (event.fileUrl) {
+                      if (event.fileUrl.toLowerCase().endsWith('.pdf')) {
                         window.open(event.fileUrl, '_blank');
-                      } else if (isImage) {
+                      } else if (event.fileUrl.match(/\.(jpeg|jpg|gif|png)$/i)) {
                         setIsViewerOpen(true);
                       }
-                    }}
-                  >
-                    {isPDF ? (
-                      <FileText className="h-3.5 w-3.5" />
-                    ) : isImage ? (
-                      <Eye className="h-3.5 w-3.5" />
-                    ) : (
-                      <Download className="h-3.5 w-3.5" />
-                    )}
-                    <span>
-                      {isPDF ? 'Open PDF' : isImage ? 'View Image' : 'Download'}
-                    </span>
-                  </Button>
-                )}
-              </div>
-              
-              {event.fileUrl ? (
-                <div className="rounded-md border overflow-hidden bg-muted/50">
-                  {isImage ? (
-                    <div className="flex items-center justify-center p-4">
-                      <img 
-                        src={event.fileUrl} 
-                        alt={event.title} 
-                        className="max-h-[60vh] max-w-full object-contain rounded"
-                        onClick={() => setIsViewerOpen(true)}
-                        style={{ cursor: 'zoom-in' }}
-                      />
-                    </div>
-                  ) : isPDF ? (
-                    <div className="h-[60vh] flex items-center justify-center">
-                      <div className="text-center p-8">
-                        <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                        <p className="text-sm text-muted-foreground mb-4">
-                          PDF files can be viewed in a new tab
-                        </p>
-                        <Button 
-                          variant="outline" 
-                          onClick={() => window.open(event.fileUrl, '_blank')}
-                          className="gap-1.5"
-                        >
-                          <FileText className="h-4 w-4" />
-                          Open PDF in New Tab
-                        </Button>
-                      </div>
-                    </div>
+                    }
+                  }}
+                >
+                  {event.fileUrl.toLowerCase().endsWith('.pdf') ? (
+                    <FileTextIcon className="h-3.5 w-3.5" />
                   ) : (
-                    <div className="h-[200px] flex items-center justify-center">
-                      <div className="text-center">
-                        <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground mb-4">
-                          Document preview not available
-                        </p>
-                        <Button variant="outline" className="gap-1.5">
-                          <Download className="h-4 w-4" />
-                          Download File
-                        </Button>
-                      </div>
-                    </div>
+                    <Eye className="h-3.5 w-3.5" />
                   )}
-                </div>
+                  {event.fileUrl.toLowerCase().endsWith('.pdf') ? 'View PDF' : 'View Image'}
+                </Button>
+              )}
+            </div>
+            
+            <div className="mt-4">
+              {event.fileUrl ? (
+                event.fileUrl.match(/\.(jpeg|jpg|gif|png)$/i) ? (
+                  <div className="flex justify-center">
+                    <img 
+                      src={event.fileUrl} 
+                      alt={event.title} 
+                      className="max-h-[60vh] max-w-full object-contain rounded cursor-pointer"
+                      onClick={() => setIsViewerOpen(true)}
+                    />
+                  </div>
+                ) : event.fileUrl.toLowerCase().endsWith('.pdf') ? (
+                  <div className="h-[60vh] flex items-center justify-center">
+                    <div className="text-center p-8">
+                      <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                      <p className="text-sm text-muted-foreground mb-4">
+                        PDF files can be viewed in a new tab
+                      </p>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => window.open(event.fileUrl, '_blank')}
+                        className="gap-1.5"
+                      >
+                        <FileText className="h-4 w-4" />
+                        Open PDF in New Tab
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="h-[200px] flex items-center justify-center">
+                    <div className="text-center">
+                      <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Document preview not available
+                      </p>
+                      <Button 
+                        variant="outline" 
+                        className="gap-1.5"
+                        onClick={() => event.fileUrl && window.open(event.fileUrl, '_blank')}
+                      >
+                        <Download className="h-4 w-4" />
+                        Download File
+                      </Button>
+                    </div>
+                  </div>
+                )
               ) : (
                 <div className="h-[200px] flex items-center justify-center rounded-md border border-dashed bg-muted/25">
                   <div className="text-center">
-                    <FileText className="mx-auto h-8 w-8 text-muted-foreground/30 mb-2" />
+                    <FileTextIcon className="mx-auto h-8 w-8 text-muted-foreground/30 mb-2" />
                     <p className="text-sm text-muted-foreground">
                       No document attached
                     </p>
@@ -595,28 +865,39 @@ const demoEvents: TimelineEvent[] = [
           </div>
         </DialogContent>
       </Dialog>
-    </div>
-  );
-}
 
 export default function ReportsPage() {
-  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  // State management
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
-  const [events, setEvents] = useState<TimelineEvent[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('all');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'all' | 'report' | 'prescription'>('all');
+  const [events, setEvents] = useState<TimelineEvent[]>(demoEvents);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  
+  // Derived state
+  const isImage = selectedEvent?.fileUrl?.match(/\.(jpeg|jpg|gif|png)$/i) !== null;
+  const isPDF = selectedEvent?.fileUrl?.toLowerCase().endsWith('.pdf');
+  
+  // Event handlers
+  const handleViewEvent = (event: TimelineEvent) => {
+    setSelectedEvent(event);
+    setIsDialogOpen(true);
+  };
+  
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedEvent(null);
+  };
   
   const handleUploadSuccess = () => {
     // TODO: Implement actual data fetching
     setEvents(demoEvents);
     setIsUploadDialogOpen(false);
-  };
-  
-  const handleViewEvent = (event: TimelineEvent) => {
-    setSelectedEvent(event);
   };
   
   // Form setup
@@ -724,13 +1005,14 @@ export default function ReportsPage() {
                 <span className="h-2 w-2 rounded-full bg-primary"></span>
               )}
             </Button>
-            <Button 
-              onClick={() => setIsUploadDialogOpen(true)}
-              className="gap-2 transition-all duration-200 hover:bg-primary/90"
-            >
-              <Upload className="h-4 w-4" />
-              Upload
-            </Button>
+            <UploadDialog onSuccess={handleUploadSuccess}>
+              <Button 
+                className="gap-2 transition-all duration-200 hover:bg-primary/90"
+              >
+                <Upload className="h-4 w-4" />
+                Upload
+              </Button>
+            </UploadDialog>
           </motion.div>
         </div>
 
