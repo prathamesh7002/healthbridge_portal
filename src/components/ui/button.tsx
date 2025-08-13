@@ -1,6 +1,8 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
+import { Loader2 } from "lucide-react"
+import { motion } from "framer-motion"
 
 import { cn } from "@/lib/utils"
 
@@ -37,17 +39,100 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
+  isLoading?: boolean
+  loadingText?: string
+  animationType?: 'none' | 'pulse' | 'bounce' | 'tada'
+}
+
+const buttonAnimations = {
+  none: {},
+  pulse: {
+    initial: { scale: 1 },
+    animate: { 
+      scale: [1, 1.02, 1],
+      transition: { 
+        repeat: Infinity, 
+        repeatType: 'reverse' as const,
+        duration: 1.5 
+      } 
+    },
+    whileHover: { scale: 1.05 },
+    whileTap: { scale: 0.98 }
+  },
+  bounce: {
+    initial: { y: 0 },
+    animate: { 
+      y: [0, -3, 0],
+      transition: { 
+        repeat: Infinity, 
+        duration: 2 
+      } 
+    },
+    whileHover: { y: -2 },
+    whileTap: { scale: 0.98 }
+  },
+  tada: {
+    initial: { scale: 1, rotate: 0 },
+    animate: { 
+      scale: [1, 0.9, 0.9, 1.1, 0.9, 1.03, 0.97, 1],
+      rotate: [0, -3, -3, -3, 3, -2, 2, 0],
+      transition: { 
+        repeat: Infinity, 
+        duration: 2,
+        repeatDelay: 3
+      } 
+    },
+    whileHover: { scale: 1.05 },
+    whileTap: { scale: 0.98 }
+  }
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
+  ({ 
+    className, 
+    variant, 
+    size, 
+    asChild = false, 
+    children,
+    disabled,
+    isLoading = false,
+    loadingText,
+    animationType = 'none',
+    ...props 
+  }, ref) => {
+    const Comp = asChild ? Slot : motion.button
+    const animationProps = buttonAnimations[animationType] || {}
+    
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(
+          'relative overflow-hidden',
+          buttonVariants({ variant, size, className }),
+          isLoading && 'cursor-wait'
+        )}
         ref={ref}
+        disabled={disabled || isLoading}
+        {...animationProps}
         {...props}
-      />
+      >
+        {isLoading && (
+          <motion.div 
+            className="absolute inset-0 flex items-center justify-center bg-inherit"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+          >
+            <Loader2 className="h-5 w-5 animate-spin" />
+            {loadingText && <span className="ml-2">{loadingText}</span>}
+          </motion.div>
+        )}
+        <span className={cn(
+          'inline-flex items-center justify-center gap-2',
+          isLoading && 'invisible'
+        )}>
+          {children}
+        </span>
+      </Comp>
     )
   }
 )

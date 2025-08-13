@@ -1,0 +1,48 @@
+{
+  "name": "HealthBridge Portal",
+  "short_name": "HealthBridge",
+  "description": "Your personal health management portal for appointments, reports, and medical records",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/dashboard.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "label": "HealthBridge Dashboard"
+    }
+  ],
+  "categories": ["health", "medical", "productivity"],
+  "orientation": "portrait",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Book Appointment",
+      "short_name": "Appointments",
+      "description": "Schedule a new doctor's appointment",
+      "url": "/appointments"
+    },
+    {
+      "name": "View Reports",
+      "short_name": "Reports",
+      "description": "View your medical reports",
+      "url": "/reports"
+    }
+  ]
+}

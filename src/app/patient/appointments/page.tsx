@@ -15,6 +15,8 @@ import { Clock } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { HelpTooltip, PageHelp } from '@/components/help/HelpTooltip';
+import { Info } from 'lucide-react';
 import whatsappImage from './whatsapp.jpg';
 
 const appointmentSchema = z.object({
@@ -70,12 +72,26 @@ export default function BookAppointmentPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in">
+      <PageHelp>
+        Book appointments easily through our WhatsApp booking system or use the traditional form. Get instant confirmations and reminders for all your appointments.
+      </PageHelp>
+      
       {/* WhatsApp Booking Section */}
       <Card className="mb-12 bg-card border shadow-lg">
         <div className="flex flex-col md:flex-row items-center gap-8 p-6">
           {/* Details Left */}
           <div className="flex-1 w-full">
-            <CardTitle className="text-2xl font-bold mb-2 text-foreground">Book via WhatsApp</CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-2xl font-bold text-foreground">Book via WhatsApp</CardTitle>
+              <HelpTooltip 
+                id="whatsapp-booking"
+                title="WhatsApp Booking"
+                content="Book your appointment through WhatsApp for a quick and easy chat-based experience. Our AI assistant will guide you through the process and confirm your appointment instantly."
+                showOnFirstVisit={true}
+              >
+                <Info className="h-4 w-4 text-muted-foreground" />
+              </HelpTooltip>
+            </div>
             <CardDescription className="mb-4 text-base text-muted-foreground">
               Prefer chatting? Book your appointment directly through WhatsApp for a seamless, conversational experience. Our assistant will guide you step-by-step and confirm your slot instantly.
             </CardDescription>
@@ -139,7 +155,16 @@ export default function BookAppointmentPage() {
       {/* Regular Appointment Form */}
       <Card>
         <CardHeader>
-          <CardTitle>Book a New Appointment</CardTitle>
+          <div className="flex items-center gap-2">
+            <CardTitle>Book a New Appointment</CardTitle>
+            <HelpTooltip 
+              id="appointment-form"
+              title="Appointment Booking"
+              content="Fill out this form to schedule an appointment. All fields are required unless marked as optional."
+            >
+              <Info className="h-4 w-4 text-muted-foreground" />
+            </HelpTooltip>
+          </div>
           <CardDescription>Find a doctor and schedule your next visit in a few simple steps.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -152,7 +177,16 @@ export default function BookAppointmentPage() {
                     name="specialization"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Specialization</FormLabel>
+                        <div className="flex items-center gap-2">
+                          <FormLabel>Specialization</FormLabel>
+                          <HelpTooltip 
+                            id="specialization-field"
+                            title="Select Specialization"
+                            content="Choose the medical specialty that best matches your health concern. This helps us connect you with the right doctor."
+                          >
+                            <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                          </HelpTooltip>
+                        </div>
                         <Select onValueChange={(value: keyof typeof doctors) => {
                           field.onChange(value);
                           setSelectedSpec(value);
@@ -176,7 +210,16 @@ export default function BookAppointmentPage() {
                     name="doctor"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Doctor</FormLabel>
+                        <div className="flex items-center gap-2">
+                          <FormLabel>Doctor</FormLabel>
+                          <HelpTooltip 
+                            id="doctor-field"
+                            title="Select Doctor"
+                            content="Choose your preferred doctor from the available specialists. You'll see their availability after selection."
+                          >
+                            <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                          </HelpTooltip>
+                        </div>
                         <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!selectedSpec}>
                           <FormControl>
                             <SelectTrigger>
@@ -196,7 +239,16 @@ export default function BookAppointmentPage() {
                     name="reason"
                     render={({ field }) => (
                       <FormItem>
+                        <div className="flex items-center gap-2">
                         <FormLabel>Reason for Visit (Optional)</FormLabel>
+                        <HelpTooltip 
+                          id="reason-field"
+                          title="Visit Reason"
+                          content="Briefly describe the reason for your visit. This helps the doctor prepare for your appointment."
+                        >
+                          <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                        </HelpTooltip>
+                      </div>
                         <FormControl>
                           <Textarea placeholder="Briefly describe the reason for your appointment..." {...field} />
                         </FormControl>
@@ -233,7 +285,16 @@ export default function BookAppointmentPage() {
                 name="time"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Available Time Slots</FormLabel>
+                    <div className="flex items-center gap-2">
+                      <FormLabel>Time</FormLabel>
+                      <HelpTooltip 
+                        id="time-field"
+                        title="Available Time Slots"
+                        content="Choose your preferred time slot for the selected date."
+                      >
+                        <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                      </HelpTooltip>
+                    </div>
                     <FormControl>
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                         {availableTimes.map(time => (
@@ -249,7 +310,19 @@ export default function BookAppointmentPage() {
                 )}
               />
               <div className="flex justify-end">
-                <Button type="submit" size="lg">Book Appointment</Button>
+                <div className="relative">
+                  <Button type="submit" className="w-full">
+                    Book Appointment
+                  </Button>
+                  <HelpTooltip 
+                    id="submit-button"
+                    title="Confirm Booking"
+                    content="Review all details before submitting. You'll receive a confirmation once your appointment is booked."
+                    position="top"
+                  >
+                    <Info className="absolute -right-2 -top-2 h-4 w-4 text-muted-foreground" />
+                  </HelpTooltip>
+                </div>
               </div>
             </form>
           </Form>

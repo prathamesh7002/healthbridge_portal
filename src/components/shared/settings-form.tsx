@@ -122,8 +122,41 @@ export function SettingsForm({ userRole }: SettingsFormProps) {
     }
   }
 
+  const handleRestartTour = () => {
+    localStorage.removeItem('healthbridge-tour-completed');
+    window.dispatchEvent(new Event('restart-tour'));
+    toast({
+      title: "Tour restarted!",
+      description: "The onboarding tour will start again when you return to the dashboard.",
+    });
+  };
+
   return (
     <div className="space-y-8">
+        <Card>
+            <CardHeader>
+                <CardTitle>Onboarding</CardTitle>
+                <CardDescription>Manage your onboarding experience</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                    <div>
+                        <h4 className="font-medium">Restart Onboarding Tour</h4>
+                        <p className="text-sm text-muted-foreground">
+                            Go through the interactive tour again to learn about the platform
+                        </p>
+                    </div>
+                    <Button 
+                        variant="outline" 
+                        onClick={handleRestartTour}
+                        className="whitespace-nowrap"
+                    >
+                        Restart Tour
+                    </Button>
+                </div>
+            </CardContent>
+        </Card>
+        
         <Card>
             <CardHeader>
                 <CardTitle>{t("appearanceTitle")}</CardTitle>

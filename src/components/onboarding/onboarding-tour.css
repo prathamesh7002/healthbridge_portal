@@ -1,0 +1,139 @@
+/* Custom styles for the onboarding tour */
+
+/* Style for the spotlight effect */
+.joyride-spotlight {
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+}
+
+/* Style for the tooltip */
+.joyride-tooltip {
+  border-radius: 0.75rem;
+  max-width: 24rem;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid #e5e7eb;
+  z-index: 10001;
+  background: white;
+  padding: 1.25rem;
+}
+
+/* Style for the buttons */
+.joyride-tooltip button {
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border: none;
+  outline: none;
+}
+
+.joyride-tooltip button[data-action='primary'] {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.joyride-tooltip button[data-action='primary']:hover {
+  background-color: #2563eb;
+}
+
+.joyride-tooltip button[data-action='back'] {
+  color: #6b7280;
+  background: transparent;
+}
+
+.joyride-tooltip button[data-action='back']:hover {
+  color: #4b5563;
+  text-decoration: underline;
+}
+
+/* Style for the progress indicator */
+.joyride-progress {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  text-align: right;
+}
+
+/* Style for the close button */
+.joyride-tooltip button[data-action='close'] {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  color: #9ca3af;
+  background: transparent;
+  padding: 0.25rem;
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.joyride-tooltip button[data-action='close']:hover {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+/* Doctor illustration container */
+.doctor-illustration {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: #e0f2fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .joyride-tooltip {
+    max-width: calc(100% - 2rem);
+    margin: 0 1rem;
+    padding: 1rem;
+  }
+  
+  .joyride-tooltip__content {
+    font-size: 0.875rem;
+  }
+  
+  .joyride-tooltip button {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* Animation for the tooltip */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.joyride-tooltip {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+/* Override default joyride styles */
+.joyride-tooltip__header {
+  display: none;
+}
+
+.joyride-tooltip__content {
+  padding: 0;
+  margin: 0;
+}
+
+.joyride-tooltip__footer {
+  margin-top: 1rem;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

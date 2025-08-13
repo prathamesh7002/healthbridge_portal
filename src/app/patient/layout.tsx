@@ -8,6 +8,7 @@ import { AppHeader } from '@/components/layout/header';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-provider';
 import { ProfileCompletionGuard } from '@/lib/profile-completion-guard';
+import { HelpProvider } from '@/contexts/HelpContext';
 
 export default function PatientLayout({ children }: { children: React.ReactNode }) {
   const { user, userRole, loading } = useAuth();
@@ -28,22 +29,28 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
   }
 
   if (!user || !userRole) {
-    return null;
+    return null; // or redirect to login
   }
 
   return (
-    <SidebarProvider defaultOpen>
-      <Sidebar variant="floating" collapsible="icon">
-        <AppSidebarNav userRole={userRole} />
-      </Sidebar>
-      <SidebarInset>
-        <AppHeader />
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-          <ProfileCompletionGuard>{children}</ProfileCompletionGuard>
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+    <HelpProvider>
+      <ProfileCompletionGuard>
+        <SidebarProvider defaultOpen>
+        <div className="relative flex min-h-screen flex-col">
+          <AppHeader className="dashboard-header" />
+          <div className="flex flex-1">
+            <Sidebar variant="floating" collapsible="icon" className="sidebar-menu">
+              <AppSidebarNav userRole={userRole} className="profile-menu" />
+            </Sidebar>
+            <SidebarInset className="bg-background w-full">
+              <main className="flex-1 overflow-y-auto p-4 md:p-6">
+                {children}
+              </main>
+            </SidebarInset>
+            </div>
+          </div>
+        </SidebarProvider>
+      </ProfileCompletionGuard>
+    </HelpProvider>
   );
 }
-
-

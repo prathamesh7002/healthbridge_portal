@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { QrCode, CalendarPlus, FileText, Share2, X, Heart, Shield, Clock } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { QRCodeCanvas } from 'qrcode.react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
@@ -13,6 +14,7 @@ const patientId = "PAT005"; // Replace with real patient id if available
 const qrString = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/patient/summary/${patientId}`;
 
 export default function PatientDashboard() {
+  const router = useRouter();
   const [qrOpen, setQrOpen] = useState(false);
   const [qrKey, setQrKey] = useState(0); // To force QR re-generation
 
@@ -28,7 +30,7 @@ export default function PatientDashboard() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header Section with Enhanced Welcome */}
-      <div className="relative overflow-hidden bg-background border-b border-muted">
+      <div className="dashboard-header relative overflow-hidden bg-background border-b border-muted">
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-2xl mb-6">
             <Heart className="h-8 w-8 text-primary" />
@@ -54,7 +56,7 @@ export default function PatientDashboard() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
         {/* Feature Cards Grid */}
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
+        <div className="quick-actions grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* Book Appointment Card */}
           <Card className="group hover:shadow-xl transition-all duration-300 border shadow-lg bg-card">
             <CardHeader className="pb-4">
@@ -207,52 +209,70 @@ export default function PatientDashboard() {
         {/* QR Modal with Theme-Aware Styling */}
         <Dialog open={qrOpen} onOpenChange={open => { if (!open) handleCloseQR(); }}>
           <DialogContent className="flex flex-col items-center justify-center max-w-sm w-full relative bg-card text-foreground border border-muted shadow-2xl">
-            <DialogTitle asChild>
-              <VisuallyHidden>Health Bridge QR Code</VisuallyHidden>
-            </DialogTitle>
-            <button
-              className="absolute top-4 right-4 text-muted-foreground hover:text-primary transition-colors"
-              onClick={handleCloseQR}
-              aria-label="Close QR"
-            >
-              <X className="h-6 w-6" />
-            </button>
-            <div className="flex items-center justify-center w-16 h-16 bg-primary/10 rounded-2xl shadow-lg mb-4">
-              <QrCode className="h-8 w-8 text-primary" />
+            <div className="absolute top-4 right-4">
+              <button
+                onClick={handleCloseQR}
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Close"
+              >
+                <X className="h-6 w-6" />
+              </button>
             </div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">Your Health Bridge QR</h3>
-            <div className="p-4 bg-background rounded-2xl shadow mb-4">
-              <QRCodeCanvas key={qrKey} value={qrString} size={200} />
-            </div>
-            <div className="text-sm text-muted-foreground text-center max-w-xs leading-relaxed">
-              Present this QR code at your appointment for instant check-in and secure access to your health records.
-              <div className="text-xs text-muted-foreground mt-2 italic">
-                *Code expires when this window is closed for your security
+            <div className="flex flex-col items-center pt-8 px-6 pb-6 text-center">
+              <div className="flex items-center justify-center w-16 h-16 bg-primary/10 rounded-2xl shadow-lg mb-4">
+                <QrCode className="h-8 w-8 text-primary" />
               </div>
+              <DialogTitle className="text-lg font-semibold text-foreground mb-2">
+                Your Health Bridge QR
+              </DialogTitle>
+              <div className="p-4 bg-background rounded-2xl shadow my-4">
+                <QRCodeCanvas key={qrKey} value={qrString} size={200} />
+              </div>
+              <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
+                Present this QR code at your appointment for instant check-in and secure access to your health records.
+                <span className="block text-xs text-muted-foreground mt-2 italic">
+                  *Code expires when this window is closed for your security
+                </span>
+              </p>
             </div>
           </DialogContent>
         </Dialog>
 
         {/* Enhanced Footer */}
-        <footer className="py-12">
-          <div className="rounded-2xl p-8 text-center border border-muted bg-card shadow-lg">
-            <div className="flex justify-center items-center gap-2 mb-4">
-              <Heart className="h-5 w-5 text-primary" />
-              <span className="font-semibold text-foreground">Health Bridge</span>
+        <div className="mt-12">
+          <Card className="appointments-card">
+            <div className="rounded-2xl p-8 text-center border border-muted bg-card shadow-lg">
+              <div className="flex justify-center items-center gap-2 mb-4">
+                <Heart className="h-5 w-5 text-primary" />
+                <span className="font-semibold text-foreground">Health Bridge</span>
+              </div>
+              <p className="text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                By using Health Bridge, you acknowledge our commitment to your privacy and security. 
+                Your health data is encrypted end-to-end and shared only with your explicit consent. 
+                Review our{' '}
+                <Link 
+                  href="/legal/terms"
+                  className="text-primary underline hover:no-underline focus:outline-none"
+                >
+                  Terms & Conditions
+                </Link>{' '}
+                and{' '}
+                <Link 
+                  href="/legal/privacy"
+                  className="text-primary underline hover:no-underline focus:outline-none"
+                >
+                  Privacy Policy
+                </Link>{' '}
+                for complete details.
+              </p>
+              <div className="flex justify-center items-center gap-6 mt-4 text-xs text-muted-foreground">
+                <span>256-bit Encryption</span>
+                <span>HIPAA Compliant</span>
+                <span>SOC 2 Certified</span>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              By using Health Bridge, you acknowledge our commitment to your privacy and security. 
-              Your health data is encrypted end-to-end and shared only with your explicit consent. 
-              Review our <span className="text-primary underline cursor-pointer">Terms & Conditions</span> and
-              <span className="text-primary underline cursor-pointer"> Privacy Policy</span> for complete details.
-            </p>
-            <div className="flex justify-center items-center gap-6 mt-4 text-xs text-muted-foreground">
-              <span>256-bit Encryption</span>
-              <span>HIPAA Compliant</span>
-              <span>SOC 2 Certified</span>
-            </div>
-          </div>
-        </footer>
+          </Card>
+        </div>
       </div>
     </div>
   );

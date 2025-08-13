@@ -1,8 +1,9 @@
 
 "use client";
 
-import { Bell, CircleUser } from "lucide-react";
+import { Bell, CircleUser, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useHelp } from "@/contexts/HelpContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
@@ -25,10 +26,15 @@ function getPageTitleKey(pathname: string): string {
   return page.replace('-', ' ');
 }
 
-export function AppHeader() {
+interface AppHeaderProps {
+  className?: string;
+}
+
+export function AppHeader({ className }: AppHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { userRole, signOut } = useAuth();
+  const { toggleHelp, isHelpEnabled } = useHelp();
   const t = useTranslations("Header");
   const tPage = useTranslations("PageTitles");
   
@@ -57,22 +63,30 @@ export function AppHeader() {
   const profilePath = userRole ? `/${userRole}/profile` : '#';
 
   return (
-    <header className="flex h-14 items-center gap-2 sm:gap-4 border-b bg-card px-3 sm:px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
+    <header className={`flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30 ${className || ''}`}>
+
       <div className="md:hidden">
         <SidebarTrigger />
       </div>
       <div className="w-full flex-1 min-w-0">
         <h1 className="truncate text-base sm:text-lg md:text-2xl font-semibold font-headline">{tPage(titleKey as any)}</h1>
       </div>
-      <Button variant="outline" size="icon" className="h-9 w-9 relative rounded-full">
-        <Bell className="h-4 w-4" />
-        <span className="sr-only">Toggle notifications</span>
-        <span className="absolute top-0 right-0 flex h-2.5 w-2.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-        </span>
-      </Button>
-      <DropdownMenu>
+      <div className="flex items-center gap-2">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="rounded-full"
+          onClick={toggleHelp}
+          title={isHelpEnabled ? 'Hide help' : 'Show help'}
+        >
+          <HelpCircle className={`h-5 w-5 ${isHelpEnabled ? 'text-blue-600' : 'text-gray-500'}`} />
+          <span className="sr-only">Help</span>
+        </Button>
+        <Button variant="outline" size="icon" className="h-9 w-9 relative rounded-full">
+          <Bell className="h-4 w-4" />
+          <span className="sr-only">Toggle notifications</span>
+        </Button>
+        <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="icon" className="rounded-full h-9 w-9">
             <CircleUser className="h-5 w-5" />
@@ -93,6 +107,7 @@ export function AppHeader() {
           <DropdownMenuItem onClick={handleLogout}>{t("logout")}</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      </div>
     </header>
   );
 }

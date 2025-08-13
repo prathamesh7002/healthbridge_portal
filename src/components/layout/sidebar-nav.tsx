@@ -27,7 +27,12 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-export function AppSidebarNav({ userRole }: { userRole: string }) {
+interface AppSidebarNavProps {
+  userRole: string;
+  className?: string;
+}
+
+export function AppSidebarNav({ userRole, className }: AppSidebarNavProps) {
   const t = useTranslations('Sidebar');
   const pathname = usePathname();
   const router = useRouter();
@@ -69,12 +74,18 @@ export function AppSidebarNav({ userRole }: { userRole: string }) {
   
   return (
     <>
-      <SidebarHeader>
-        <div className="flex items-center gap-3 p-2">
-          <div className="p-2 bg-primary rounded-lg">
-              <HeartPulse className="h-6 w-6 text-primary-foreground" />
+      <SidebarHeader className="px-4 py-3 border-b">
+        <div className="flex items-center gap-3">
+          <div className="flex-shrink-0">
+            <img 
+              src="/doctor-character.png" 
+              alt="HealthBridge Logo"
+              className="h-8 w-auto"
+            />
           </div>
-          <span className="text-lg font-semibold font-headline text-foreground group-data-[collapsible=icon]:hidden">{t('appName')}</span>
+          <span className="text-lg font-bold font-headline text-foreground group-data-[collapsible=icon]:hidden">
+            {t('appName')}
+          </span>
         </div>
       </SidebarHeader>
       <SidebarContent className="p-2">

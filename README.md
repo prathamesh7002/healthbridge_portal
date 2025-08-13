@@ -119,39 +119,28 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ## 📸 Screenshots
 
-### 🖥️ Desktop View
-![Desktop View](/screenshots/desktop-view.png)
-*Modern, clean interface with the new timeline view*
-
-### 📱 Mobile View
-![Mobile View](/screenshots/mobile-view.png)
-*Fully responsive design that works on all devices*
-
-### 📤 Upload Dialog
-![Upload Dialog](/screenshots/upload-dialog.png)
-*Easy-to-use document upload interface*
-
-### 📄 Document Preview
-![Document Preview](/screenshots/document-preview.png)
-*View documents directly in the application*
-
 ### Login Screen
 ![Login Screen](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/loginscreen.png)
+*Secure login interface with multi-language support for better accessibility*
 
 ### Dashboard Overview
 ![Dashboard](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/dashboard.png)
+*Comprehensive overview of patient health metrics and upcoming appointments*
 
 ### Appointment Booking
 ![Appointment Booking](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/appoinment-booking.png)
+*Intuitive appointment scheduling interface with real-time availability*
 
 ### Doctor Dashboard
 ![Doctor Dashboard](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/doctor-dashboard.png)
+*Centralized view for doctors to manage patient appointments and records*
 
 ### Patient Portal
 ![Patient Portal](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/patient.png)
+*Personalized health portal for patients to access their medical information*
 
 ### WhatsApp Integration
-![WhatsApp Integration](https://raw.githubusercontent.com/yogendra-08/healthbridge_portal/main/public/whatsapp.jpg)
+![WhatsApp Integration](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/wscreenshot)
 *Seamless appointment booking through WhatsApp with multi-language support*
 
 ## 🔧 Installation
