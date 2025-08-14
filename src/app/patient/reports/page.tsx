@@ -25,6 +25,17 @@ import {
   X 
 } from 'lucide-react';
 import { toast, useToast } from '@/components/ui/use-toast';
+import { UploadDialog } from "@/components/patient/upload-dialog";
+import { StorageDebugPanel } from "@/components/debug/storage-debug";
+import { useToast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 // UI Components
 import { Button } from '@/components/ui/button';
@@ -518,6 +529,7 @@ export default function ReportsPage() {
 
   return (
     <div className="animate-fade-in">
+
       <div className="container mx-auto py-8 px-4">
         {/* If PageHelp is not a valid component, replace with a div */}
         {/* <PageHelp>
@@ -525,6 +537,53 @@ export default function ReportsPage() {
         </PageHelp> */}
         <div className="mb-4 text-muted-foreground">
           View and manage your medical reports and prescriptions in one place. You can filter, search, and download your documents.
+=======
+      {/* Debug Panel - Remove this after creating the bucket */}
+      <div className="container mx-auto p-4 md:p-6 max-w-6xl mb-6">
+        <StorageDebugPanel />
+      </div>
+      
+      <div className="container mx-auto p-4 md:p-6 max-w-6xl">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Medical History</h1>
+            <p className="text-muted-foreground">
+              Your complete medical records and prescriptions in one place.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2 w-full md:w-auto">
+            <Tabs 
+              value={filter} 
+              onValueChange={(value) => setFilter(value as 'all' | 'report' | 'prescription')}
+              className="w-full sm:w-auto"
+            >
+              <TabsList className="h-auto p-1">
+                <TabsTrigger value="all" className="px-3 py-1.5 text-xs sm:text-sm">
+                  <Filter className="mr-1.5 h-3.5 w-3.5" />
+                  All
+                </TabsTrigger>
+                <TabsTrigger value="report" className="px-3 py-1.5 text-xs sm:text-sm">
+                  <FileSpreadsheet className="mr-1.5 h-3.5 w-3.5" />
+                  <span className="hidden xs:inline">Reports</span>
+                  <span className="xs:hidden">Rpts</span>
+                </TabsTrigger>
+                <TabsTrigger value="prescription" className="px-3 py-1.5 text-xs sm:text-sm">
+                  <Pill className="mr-1.5 h-3.5 w-3.5" />
+                  <span className="hidden xs:inline">Prescriptions</span>
+                  <span className="xs:hidden">Rx</span>
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+            <Button 
+              onClick={() => setIsUploadDialogOpen(true)}
+              className="gap-1.5 w-full sm:w-auto"
+            >
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Upload New</span>
+              <span className="sm:hidden">New</span>
+            </Button>
+          </div>
+
         </div>
         
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Supabase Storage Admin Tool</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      input,
+      button {
+        padding: 10px;
+        margin: 8px 0;
+        width: 100%;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+      }
+      button {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #2563eb;
+      }
+      .message {
+        margin-top: 12px;
+        font-weight: bold;
+      }
+      hr {
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Supabase Storage Admin</h2>
+
+    <!-- File Upload -->
+    <h3>Upload File</h3>
+    <input type="file" id="fileInput" />
+    <button onclick="uploadFile()">Upload</button>
+    <div class="message" id="uploadMsg"></div>
+
+    <!-- Supabase JS -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+      const SUPABASE_URL = "https://pjrrooswyrzecglsngyn.supabase.co";
+      const SUPABASE_SERVICE_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqcnJvb3N3eXJ6ZWNnbHNuZ3luIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDQ2MDk1OCwiZXhwIjoyMDcwMDM2OTU4fQ.nxj9ZOjydTfZ0KWVy2oY8-XZkMy3HSNjbnpbOZF8aFQ";
+      const BUCKET_NAME = "health-bridge"; // hardcoded bucket name
+
+      const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+
+      async function ensureBucketExists() {
+        const { data: buckets, error } = await sbClient.storage.listBuckets();
+        if (error) {
+          console.error("Error listing buckets:", error);
+          return;
+        }
+        const exists = buckets.some(b => b.name === BUCKET_NAME);
+        if (!exists) {
+          const { error: createError } = await sbClient.storage.createBucket(BUCKET_NAME, {
+            public: true,
+            allowedMimeTypes: ["image/*", "application/pdf"],
+            fileSizeLimit: "6MB"
+          });
+          if (createError) {
+            console.error("Error creating bucket:", createError);
+          } else {
+            console.log(`Bucket "${BUCKET_NAME}" created successfully.`);
+          }
+        } else {
+          console.log(`Bucket "${BUCKET_NAME}" already exists.`);
+        }
+      }
+
+      async function uploadFile() {
+        await ensureBucketExists();
+
+        const fileInput = document.getElementById("fileInput");
+        const msg = document.getElementById("uploadMsg");
+
+        if (fileInput.files.length === 0) {
+          msg.textContent = "Select a file to upload.";
+          msg.style.color = "red";
+          return;
+        }
+
+        const file = fileInput.files[0];
+        const filePath = `${Date.now()}-${file.name}`;
+
+        const { data, error } = await sbClient.storage
+          .from(BUCKET_NAME)
+          .upload(filePath, file);
+
+        if (error) {
+          msg.textContent = `Upload error: ${error.message}`;
+          msg.style.color = "red";
+        } else {
+          msg.textContent = `Uploaded: ${data.path}`;
+          msg.style.color = "green";
+        }
+      }
+
+      // Ensure bucket exists on page load
+      ensureBucketExists();
+    </script>
+  </body>
+</html>

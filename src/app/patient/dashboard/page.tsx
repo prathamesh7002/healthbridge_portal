@@ -7,7 +7,7 @@ import { QrCode, CalendarPlus, FileText, Share2, X, Heart, Shield, Clock } from 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { QRCodeCanvas } from 'qrcode.react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 const patientId = "PAT005"; // Replace with real patient id if available
@@ -88,8 +88,8 @@ export default function PatientDashboard() {
                   <span>Centralized appointment management</span>
                 </div>
               </div>
-              <Button asChild size="lg" className="w-full">
-                <Link href="/patient/appointments">Book Appointment</Link>
+              <Button size="lg" className="w-full" onClick={() => router.push('/patient/appointments')}>
+                Book Appointment
               </Button>
             </CardContent>
           </Card>
@@ -125,8 +125,8 @@ export default function PatientDashboard() {
                   <span>Real-time care team synchronization</span>
                 </div>
               </div>
-              <Button asChild size="lg" className="w-full">
-                <Link href="/patient/reports">Update Records</Link>
+              <Button size="lg" className="w-full" onClick={() => router.push('/patient/reports')}>
+                Update Records
               </Button>
             </CardContent>
           </Card>
@@ -162,8 +162,8 @@ export default function PatientDashboard() {
                   <span>Multi-format export capabilities</span>
                 </div>
               </div>
-              <Button asChild size="lg" className="w-full">
-                <Link href="/patient/reports">Share Reports</Link>
+              <Button size="lg" className="w-full" onClick={() => router.push('/patient/reports')}>
+                Share Reports
               </Button>
             </CardContent>
           </Card>
@@ -209,6 +209,11 @@ export default function PatientDashboard() {
         {/* QR Modal with Theme-Aware Styling */}
         <Dialog open={qrOpen} onOpenChange={open => { if (!open) handleCloseQR(); }}>
           <DialogContent className="flex flex-col items-center justify-center max-w-sm w-full relative bg-card text-foreground border border-muted shadow-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-semibold text-foreground mb-2 text-center">
+                Your Health Bridge QR
+              </DialogTitle>
+            </DialogHeader>
             <div className="absolute top-4 right-4">
               <button
                 onClick={handleCloseQR}
@@ -218,13 +223,10 @@ export default function PatientDashboard() {
                 <X className="h-6 w-6" />
               </button>
             </div>
-            <div className="flex flex-col items-center pt-8 px-6 pb-6 text-center">
+            <div className="flex flex-col items-center pt-4 px-6 pb-6 text-center">
               <div className="flex items-center justify-center w-16 h-16 bg-primary/10 rounded-2xl shadow-lg mb-4">
                 <QrCode className="h-8 w-8 text-primary" />
               </div>
-              <DialogTitle className="text-lg font-semibold text-foreground mb-2">
-                Your Health Bridge QR
-              </DialogTitle>
               <div className="p-4 bg-background rounded-2xl shadow my-4">
                 <QRCodeCanvas key={qrKey} value={qrString} size={200} />
               </div>
