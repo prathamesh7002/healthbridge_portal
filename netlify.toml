@@ -1,0 +1,17 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NEXT_USE_TURBOPACK = "false"  # Disable Turbopack for Netlify builds
+  NODE_VERSION = "20.11.1"  # Match your local Node.js version
+  NPM_FLAGS = "--legacy-peer-deps"  # Helps with dependency resolution
+
+[functions]
+  node_bundler = "esbuild"  # Use esbuild for faster builds
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+  [plugins.inputs]
+    enableStatic404 = true
+    enableStatic500 = true

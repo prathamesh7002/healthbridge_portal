@@ -2,11 +2,14 @@
 const createNextIntlPlugin = require('next-intl/plugin');
 const withNextIntl = createNextIntlPlugin();
 
+// Disable PWA for Netlify builds to prevent conflicts
+const isNetlify = process.env.NETLIFY === 'true';
+
 const withPWA = require('@ducanh2912/next-pwa').default({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development',
+  disable: process.env.NODE_ENV === 'development' || isNetlify,
   cacheOnFrontEndNav: true,
   runtimeCaching: [
     {
