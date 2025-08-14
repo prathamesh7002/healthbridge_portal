@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Get user role from localStorage if user is authenticated
         if (initialSession?.user) {
           const storedRole = localStorage.getItem('userRole');
-          if (storedRole && ['patient', 'doctor', 'admin'].includes(storedRole)) {
+          if (storedRole && (storedRole === 'patient' || storedRole === 'doctor')) {
             setUserRole(storedRole);
             
             // Handle patient profile if user is a patient
@@ -71,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           } else {
             // Try to get role from user metadata
             const role = initialSession.user.user_metadata?.role;
-            if (role && ['patient', 'doctor', 'admin'].includes(role)) {
+            if (role && (role === 'patient' || role === 'doctor')) {
               setUserRole(role);
               localStorage.setItem('userRole', role);
               
@@ -103,7 +103,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (session?.user) {
           // User is signed in
           const storedRole = localStorage.getItem('userRole');
-          if (storedRole && ['patient', 'doctor', 'admin'].includes(storedRole)) {
+          if (storedRole && (storedRole === 'patient' || storedRole === 'doctor')) {
             setUserRole(storedRole);
             
             // Handle patient profile if user is a patient
@@ -113,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           } else {
             // Try to get role from user metadata
             const role = session.user.user_metadata?.role;
-            if (role && ['patient', 'doctor', 'admin'].includes(role)) {
+            if (role && (role === 'patient' || role === 'doctor')) {
               setUserRole(role);
               localStorage.setItem('userRole', role);
               

@@ -1,4 +1,4 @@
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
+import { AlertTriangle } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type FormErrorProps = {
@@ -19,7 +19,7 @@ export function FormError({
         className
       )}
     >
-      <ExclamationTriangleIcon className="h-4 w-4 flex-shrink-0" />
+      <AlertTriangle className="h-4 w-4 flex-shrink-0" />
       <span>{message}</span>
     </div>
   )

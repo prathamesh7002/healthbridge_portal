@@ -2,12 +2,11 @@
 
 import { PlaceholderPage } from '@/components/shared/placeholder-page';
 
-export default function AdminDashboard() {
+export default function DoctorDashboard() {
   return (
     <PlaceholderPage 
-      title="Admin Dashboard"
-      description="Welcome to the admin dashboard. Manage the healthcare system, users, and settings."
-      icon="settings"
+      title="Doctor's Dashboard"
+      description="Welcome to your doctor's dashboard. Manage your patients, appointments, and settings."
     />
   );
 }

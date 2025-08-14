@@ -15,7 +15,7 @@ export default function ClinicSettingsPage() {
                 </p>
             </div>
             <Separator />
-            <SettingsForm userRole="admin" />
+            <SettingsForm userRole="doctor" />
         </div>
     );
 }

@@ -16,12 +16,30 @@ const mockPatients = [
   // Add more mock patients as needed
 ];
 
-async function getPatientData(patientId) {
+interface PatientData {
+  patientId: string;
+  fullName: string;
+  age: number;
+  gender: string;
+  bloodGroup: string;
+  contactNumber: string;
+  email: string;
+  address: string;
+}
+
+async function getPatientData(patientId: string): Promise<PatientData | null> {
   // Simulate async fetch (replace with real fetch in production)
   return mockPatients.find((p) => p.patientId === patientId) || null;
 }
 
-export default async function PatientSummaryPage({ params }) {
+interface PageProps {
+  params: {
+    patientId: string;
+  };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
+export default async function PatientSummaryPage({ params }: PageProps) {
   const { patientId } = params;
   const patient = await getPatientData(patientId);
 
