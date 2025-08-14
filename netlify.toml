@@ -18,7 +18,3 @@
 # Next.js plugin configuration
 [[plugins]]
   package = "@netlify/plugin-nextjs"
-  [plugins.inputs]
-    enableStatic404 = true
-    enableStatic500 = true
-    experimental_plugin = true
