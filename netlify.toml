@@ -5,7 +5,7 @@
 [build.environment]
   # Build settings
   NEXT_USE_TURBOPACK = "false"  # Disable Turbopack for Netlify builds
-  NODE_VERSION = "20.11.1"  # Match your local Node.js version
+  NODE_VERSION = "18.17.1"  # Using Node.js 18 LTS for better compatibility
   NPM_FLAGS = "--legacy-peer-deps"  # Helps with dependency resolution
   
   # Required environment variables for build
