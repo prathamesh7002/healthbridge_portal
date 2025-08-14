@@ -14,7 +14,6 @@
 
 [functions]
   node_bundler = "esbuild"  # Use esbuild for faster builds
-  external_node_modules = ["@neondatabase/serverless"]
 
 # Next.js plugin configuration
 [[plugins]]
@@ -23,10 +22,3 @@
     enableStatic404 = true
     enableStatic500 = true
     experimental_plugin = true
-
-# Neon database plugin
-[[plugins]]
-  package = "@netlify/plugin-neon"
-  [plugins.inputs]
-    # This will be set in Netlify environment variables
-    connectionString = "${NEON_DATABASE_URL}"
