@@ -3,12 +3,12 @@
   publish = ".next"
 
 [build.environment]
+  # Build settings
   NEXT_USE_TURBOPACK = "false"  # Disable Turbopack for Netlify builds
   NODE_VERSION = "20.11.1"  # Match your local Node.js version
   NPM_FLAGS = "--legacy-peer-deps"  # Helps with dependency resolution
-
-# Required environment variables for build
-[build.environment]
+  
+  # Required environment variables for build
   NEXT_TELEMETRY_DISABLED = "1"
   NETLIFY_NEXT_PLUGIN_SKIP = "false"
 
