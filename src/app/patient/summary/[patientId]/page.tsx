@@ -30,23 +30,19 @@ async function getPatientData(patientId: string): Promise<PatientData | null> {
   return (mockPatients as unknown as PatientData[]).find((p) => p.patientId === patientId) || null;
 }
 
-interface PageProps {
-  params: {
-    patientId: string;
-  };
-  searchParams?: {
-    [key: string]: string | string[] | undefined;
-  };
-}
+type PageProps = {
+  params: { patientId: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+};
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { patientId: string } }): Promise<Metadata> {
   const patient = await getPatientData(params.patientId);
   return {
     title: patient ? `${patient.fullName}'s Summary` : 'Patient Not Found',
   };
 }
 
-export default async function PatientSummaryPage({ params }: { params: { patientId: string } }) {
+export default async function PatientSummaryPage({ params }: PageProps) {
   const { patientId } = params;
   const patient = await getPatientData(patientId);
 
