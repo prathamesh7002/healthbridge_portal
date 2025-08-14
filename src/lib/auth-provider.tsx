@@ -25,15 +25,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   // Function to handle patient profile creation/fetching
-  const handlePatientProfile = async (userId: string, userEmail: string) => {
+  const handlePatientProfile = async (userId: string, userEmail: string, userData?: any) => {
     try {
-      const userFullName = user?.user_metadata?.fullName || user?.user_metadata?.name;
+      const userFullName = userData?.user_metadata?.fullName || userData?.user_metadata?.name || user?.user_metadata?.fullName || user?.user_metadata?.name;
+      console.log('Starting patient profile fetch/create for:', userId);
       const profile = await getOrCreatePatientProfile(userId, userEmail, userFullName);
       setPatientProfile(profile);
       console.log('Patient profile loaded/created:', profile);
     } catch (error) {
       console.error('Error handling patient profile:', error);
+      // Don't block login if profile creation fails
       setPatientProfile(null);
+      // Continue with login flow
     }
   };
 
@@ -48,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
+        console.log('🔧 Initializing auth...');
         // Get initial session
         const { data: { session: initialSession }, error } = await supabase.auth.getSession();
         
@@ -55,34 +59,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.error('Error getting session:', error);
         }
 
+        console.log('📋 Initial session:', initialSession?.user?.email || 'No user');
         setSession(initialSession);
         setUser(initialSession?.user ?? null);
 
         // Get user role from localStorage if user is authenticated
         if (initialSession?.user) {
           const storedRole = localStorage.getItem('userRole');
-          if (storedRole && (storedRole === 'patient' || storedRole === 'doctor')) {
+          console.log('🔑 Stored role:', storedRole);
+          
+          if (storedRole && ['patient', 'doctor', 'admin'].includes(storedRole)) {
             setUserRole(storedRole);
+            console.log('✅ Using stored role:', storedRole);
             
-            // Handle patient profile if user is a patient
+            // Handle patient profile if user is a patient (non-blocking)
             if (storedRole === 'patient' && initialSession.user.email) {
-              await handlePatientProfile(initialSession.user.id, initialSession.user.email);
+              handlePatientProfile(initialSession.user.id, initialSession.user.email, initialSession.user);
             }
           } else {
             // Try to get role from user metadata
             const role = initialSession.user.user_metadata?.role;
-            if (role && (role === 'patient' || role === 'doctor')) {
+            console.log('🏷️ User metadata role:', role);
+            
+            if (role && ['patient', 'doctor', 'admin'].includes(role)) {
               setUserRole(role);
               localStorage.setItem('userRole', role);
+              console.log('✅ Using metadata role:', role);
               
-              // Handle patient profile if user is a patient
+              // Handle patient profile if user is a patient (non-blocking)
               if (role === 'patient' && initialSession.user.email) {
-                await handlePatientProfile(initialSession.user.id, initialSession.user.email);
+                handlePatientProfile(initialSession.user.id, initialSession.user.email, initialSession.user);
               }
             }
           }
         }
 
+        console.log('🎯 Setting loading to false (initializeAuth)');
         setLoading(false);
       } catch (error) {
         console.error('Error initializing auth:', error);
@@ -95,40 +107,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
+        console.log('🔄 Auth state changed:', event, session?.user?.email || 'No user');
         
-        setSession(session);
-        setUser(session?.user ?? null);
+        try {
+          setSession(session);
+          setUser(session?.user ?? null);
 
-        if (session?.user) {
-          // User is signed in
-          const storedRole = localStorage.getItem('userRole');
-          if (storedRole && (storedRole === 'patient' || storedRole === 'doctor')) {
-            setUserRole(storedRole);
-            
-            // Handle patient profile if user is a patient
-            if (storedRole === 'patient' && session.user.email) {
-              await handlePatientProfile(session.user.id, session.user.email);
-            }
-          } else {
-            // Try to get role from user metadata
-            const role = session.user.user_metadata?.role;
-            if (role && (role === 'patient' || role === 'doctor')) {
-              setUserRole(role);
-              localStorage.setItem('userRole', role);
-              
-              // Handle patient profile if user is a patient
-              if (role === 'patient' && session.user.email) {
-                await handlePatientProfile(session.user.id, session.user.email);
+          if (session?.user) {
+            // User is signed in
+            const storedRole = localStorage.getItem('userRole');
+            console.log('🔑 Stored role in state change:', storedRole);
+            if (storedRole && ['patient', 'doctor', 'admin'].includes(storedRole)) {
+              setUserRole(storedRole);
+              console.log('✅ Using stored role in state change:', storedRole);
+
+              // Handle patient profile if user is a patient (non-blocking)
+              if (storedRole === 'patient' && session.user.email) {
+                handlePatientProfile(session.user.id, session.user.email, session.user);
+              }
+            } else {
+              // Try to get role from user metadata
+              const role = session.user.user_metadata?.role;
+              console.log('🏷️ User metadata role in state change:', role);
+              if (role && ['patient', 'doctor', 'admin'].includes(role)) {
+                setUserRole(role);
+                localStorage.setItem('userRole', role);
+                console.log('✅ Using metadata role in state change:', role);
+                
+                // Handle patient profile if user is a patient (non-blocking)
+                if (role === 'patient' && session.user.email) {
+                  handlePatientProfile(session.user.id, session.user.email, session.user);
+                }
               }
             }
+          } else {
+            // User is signed out
+            console.log('🚪 User signed out, clearing state');
+            setUserRole(null);
+            setPatientProfile(null);
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userEmail');
           }
-        } else {
-          // User is signed out
-          setUserRole(null);
-          setPatientProfile(null);
-          localStorage.removeItem('userRole');
-          localStorage.removeItem('userEmail');
+        } catch (error) {
+          console.error('Error in auth state change handler:', error);
+        } finally {
+          // Always set loading to false after handling auth state change
+          console.log('🎯 Setting loading to false (auth state change)');
+          setLoading(false);
         }
       }
     );
@@ -214,6 +239,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+  if (!ctx) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
   return ctx;
 }
