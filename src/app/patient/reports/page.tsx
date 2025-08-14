@@ -215,7 +215,7 @@ const TimelineEventCard = ({ event, onView, isEven = false }: TimelineEventCardP
                       variant="ghost" 
                       size="sm" 
                       className="h-8 px-2"
-                      onClick={(e) => {
+                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                         e.stopPropagation();
                         handleViewDocument(e);
                       }}
@@ -228,7 +228,7 @@ const TimelineEventCard = ({ event, onView, isEven = false }: TimelineEventCardP
                     variant="outline" 
                     size="sm" 
                     className="h-8 px-2"
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.stopPropagation();
                       handleDownload();
                     }}
@@ -315,7 +315,7 @@ const TimelineEventCard = ({ event, onView, isEven = false }: TimelineEventCardP
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.stopPropagation();
                       handleViewDocument(e);
                     }}
@@ -326,7 +326,7 @@ const TimelineEventCard = ({ event, onView, isEven = false }: TimelineEventCardP
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.stopPropagation();
                       handleDownload();
                     }}

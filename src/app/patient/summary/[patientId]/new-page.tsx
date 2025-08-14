@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function PatientSummaryPage({ params }: { params: { patientId: string } }) {
+export default async function Page({ params }: { params: { patientId: string } }) {
   const { patientId } = params;
   const patient = await getPatientData(patientId);
 

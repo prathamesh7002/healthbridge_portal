@@ -33,11 +33,16 @@ const buttonVariants = cva(
   }
 )
 
-// Animation presets
+// Animation presets with proper typing
 const buttonAnimations = {
-  none: {},
+  none: {
+    initial: {},
+    animate: {},
+    whileHover: {},
+    whileTap: {}
+  },
   pulse: {
-    initial: { scale: 1 },
+    initial: { scale: 1 } as const,
     animate: { 
       scale: [1, 1.02, 1],
       transition: { 
@@ -46,11 +51,11 @@ const buttonAnimations = {
         duration: 1.5 
       } 
     },
-    whileHover: { scale: 1.05 },
-    whileTap: { scale: 0.98 }
+    whileHover: { scale: 1.05 } as const,
+    whileTap: { scale: 0.98 } as const
   },
   bounce: {
-    initial: { y: 0 },
+    initial: { y: 0 } as const,
     animate: { 
       y: [0, -3, 0],
       transition: { 
@@ -58,11 +63,11 @@ const buttonAnimations = {
         duration: 2 
       } 
     },
-    whileHover: { y: -2 },
-    whileTap: { scale: 0.98 }
+    whileHover: { y: -2 } as const,
+    whileTap: { scale: 0.98 } as const
   },
   tada: {
-    initial: { scale: 1, rotate: 0 },
+    initial: { scale: 1, rotate: 0 } as const,
     animate: { 
       scale: [1, 0.9, 0.9, 1.1, 0.9, 1.03, 0.97, 1],
       rotate: [0, -3, -3, -3, 3, -2, 2, 0],
@@ -72,35 +77,52 @@ const buttonAnimations = {
         repeatDelay: 3
       } 
     },
-    whileHover: { scale: 1.05 },
-    whileTap: { scale: 0.98 }
+    whileHover: { scale: 1.05 } as const,
+    whileTap: { scale: 0.98 } as const
   }
 } as const
 
+type AnimationType = keyof typeof buttonAnimations
+
 // Base button props
 type BaseButtonProps = {
+  /** Show loading spinner */
   isLoading?: boolean
+  /** Text to show when loading */
   loadingText?: string
+  /** Additional class name */
   className?: string
+  /** Button content */
   children: React.ReactNode
+  /** Disable the button */
+  disabled?: boolean
+  /** Additional props */
+  [key: string]: any
 }
 
 // Regular button props
 type RegularButtonProps = BaseButtonProps & 
-  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onDrag' | 'onDragStart' | 'onDragEnd' | 'style'> & {
+  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onDrag' | 'onDragStart' | 'onDragEnd' | 'style' | 'onAnimationStart'> & {
+    /** Render as child */
     asChild?: boolean
+    /** Animation type */
     animationType?: never
   }
 
 // Animated button props
 type AnimatedButtonProps = BaseButtonProps & 
-  Omit<MotionProps, 'onDrag' | 'onDragStart' | 'onDragEnd' | 'style'> & {
+  Omit<MotionProps, 'onDrag' | 'onDragStart' | 'onDragEnd' | 'style' | 'onAnimationStart' | 'as'> & {
+    /** Cannot use asChild with animation */
     asChild?: false
-    animationType?: keyof typeof buttonAnimations
+    /** Animation type */
+    animationType?: AnimationType
   }
 
 type ButtonProps = (RegularButtonProps | AnimatedButtonProps) & 
-  VariantProps<typeof buttonVariants>
+  VariantProps<typeof buttonVariants> & {
+    /** Forwarded ref */
+    ref?: React.ForwardedRef<HTMLButtonElement>
+  }
 
 // Regular button component
 const RegularButton = React.forwardRef<HTMLButtonElement, RegularButtonProps & VariantProps<typeof buttonVariants>>(
@@ -138,7 +160,7 @@ const RegularButton = React.forwardRef<HTMLButtonElement, RegularButtonProps & V
 // Animated button component
 const AnimatedButton = React.forwardRef<HTMLButtonElement, AnimatedButtonProps & VariantProps<typeof buttonVariants>>(
   ({ className, variant, size, children, disabled, isLoading, loadingText, animationType = 'none', ...props }, ref) => {
-    const animation = buttonAnimations[animationType] || {}
+    const animation = (buttonAnimations as Record<string, any>)[animationType] || {}
     
     return (
       <motion.button

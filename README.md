@@ -140,7 +140,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 *Personalized health portal for patients to access their medical information*
 
 ### WhatsApp Integration
-![WhatsApp Integration](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/wscreenshot)
+![WhatsApp Integration](https://github.com/yogendra-08/healthbridge_portal/blob/main/project-screenshots/wscreenshot.png)
 *Seamless appointment booking through WhatsApp with multi-language support*
 
 ## 🔧 Installation

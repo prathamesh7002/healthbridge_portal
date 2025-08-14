@@ -49,7 +49,6 @@ const withPWA = require('@ducanh2912/next-pwa').default({
 
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   images: {
     domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
     formats: ['image/avif', 'image/webp'],
