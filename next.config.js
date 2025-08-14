@@ -44,7 +44,9 @@ const withPWA = require('@ducanh2912/next-pwa').default({
         asset.name.startsWith('server/') ||
         asset.name.match(/\/(server|edge)-runtime\.[\w-]+\.js$/) ||
         asset.name === 'react-refresh.js' ||
-        asset.name.endsWith('.map')
+        asset.name.endsWith('.map') ||
+        // Exclude middleware from PWA build
+        asset.name.includes('middleware')
       ) {
         return true;
       }
