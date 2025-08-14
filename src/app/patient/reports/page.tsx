@@ -25,17 +25,8 @@ import {
   X 
 } from 'lucide-react';
 import { toast, useToast } from '@/components/ui/use-toast';
-import { UploadDialog } from "@/components/patient/upload-dialog";
 import { StorageDebugPanel } from "@/components/debug/storage-debug";
-import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 // UI Components
 import { Button } from '@/components/ui/button';
@@ -529,15 +520,6 @@ export default function ReportsPage() {
 
   return (
     <div className="animate-fade-in">
-
-      <div className="container mx-auto py-8 px-4">
-        {/* If PageHelp is not a valid component, replace with a div */}
-        {/* <PageHelp>
-          View and manage your medical reports and prescriptions in one place. You can filter, search, and download your documents.
-        </PageHelp> */}
-        <div className="mb-4 text-muted-foreground">
-          View and manage your medical reports and prescriptions in one place. You can filter, search, and download your documents.
-=======
       {/* Debug Panel - Remove this after creating the bucket */}
       <div className="container mx-auto p-4 md:p-6 max-w-6xl mb-6">
         <StorageDebugPanel />
@@ -553,8 +535,8 @@ export default function ReportsPage() {
           </div>
           <div className="flex flex-wrap gap-2 w-full md:w-auto">
             <Tabs 
-              value={filter} 
-              onValueChange={(value) => setFilter(value as 'all' | 'report' | 'prescription')}
+              value={activeTab}
+              onValueChange={(value) => setActiveTab(value as 'all' | 'report' | 'prescription')}
               className="w-full sm:w-auto"
             >
               <TabsList className="h-auto p-1">
