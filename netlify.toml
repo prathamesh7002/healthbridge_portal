@@ -1,33 +1,16 @@
 [build]
   command = "npm run build"
   publish = ".next"
-  functions = ".netlify/functions"
-  edge_functions = "netlify/edge-functions"
+  functions = "netlify/functions"
 
 [build.environment]
-  # Build settings
-  NEXT_USE_TURBOPACK = "false"  # Disable Turbopack for Netlify builds
-  NODE_VERSION = "20.12.2"  # Using Node.js 20 LTS for Next.js compatibility
-  NPM_FLAGS = "--legacy-peer-deps"  # Helps with dependency resolution
-  
-  # Required environment variables for build
+  NODE_VERSION = "20.0.0"
   NEXT_TELEMETRY_DISABLED = "1"
-  NETLIFY_NEXT_PLUGIN_SKIP = "false"
-  NETLIFY_NEXT_PLUGIN_FORCE_RUN = "true"  # Ensure the plugin runs
 
-[functions]
-  node_bundler = "esbuild"  # Use esbuild for faster builds
-  external_node_modules = ["next-intl"]  # Externalize next-intl
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 
-[dev]
-  framework = "nextjs"
-  targetPort = 3000
-
-# Next.js plugin configuration
 [[plugins]]
   package = "@netlify/plugin-nextjs"
-
-# Edge Functions configuration
-[[edge_functions]]
-  function = "middleware"
-  path = "/*"
