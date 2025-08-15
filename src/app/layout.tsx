@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/layout/theme-provider';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { AuthProvider } from '@/lib/auth-provider';
+import { HelpProvider } from '@/contexts/HelpContext';
 import Head from 'next/head';
 
 const inter = Inter({
@@ -115,8 +116,10 @@ export default async function RootLayout({
                 enableSystem
                 disableTransitionOnChange
             >
-                {children}
-                <Toaster />
+                <HelpProvider>
+                  {children}
+                  <Toaster />
+                </HelpProvider>
             </ThemeProvider>
           </AuthProvider>
         </NextIntlClientProvider>

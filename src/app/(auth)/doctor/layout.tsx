@@ -7,6 +7,7 @@ import { AppSidebarNav } from '@/components/layout/sidebar-nav';
 import { AppHeader } from '@/components/layout/header';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-provider';
+import { HelpProvider } from '@/contexts/HelpContext';
 
 export default function DoctorLayout({ children }: { children: React.ReactNode }) {
   const { user, userRole, loading } = useAuth();
@@ -31,16 +32,18 @@ export default function DoctorLayout({ children }: { children: React.ReactNode }
   }
 
   return (
-    <SidebarProvider defaultOpen>
-      <Sidebar variant="floating" collapsible="icon">
-        <AppSidebarNav userRole={userRole} />
-      </Sidebar>
-      <SidebarInset>
-        <AppHeader />
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-          {children}
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+    <HelpProvider>
+      <SidebarProvider defaultOpen>
+        <Sidebar variant="floating" collapsible="icon">
+          <AppSidebarNav userRole={userRole} />
+        </Sidebar>
+        <SidebarInset>
+          <AppHeader />
+          <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            {children}
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+    </HelpProvider>
   );
 }

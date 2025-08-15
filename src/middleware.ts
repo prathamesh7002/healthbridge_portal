@@ -22,7 +22,7 @@ export default function middleware(request: NextRequest) {
 
 export const config = {
   // Specify the runtime environment
-  runtime: 'edge',
+  runtime: 'experimental-edge',
   
   // Skip all paths that should not be internationalized
   matcher: [

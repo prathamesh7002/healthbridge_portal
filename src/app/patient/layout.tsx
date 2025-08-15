@@ -8,7 +8,7 @@ import { AppHeader } from '@/components/layout/header';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-provider';
 import { ProfileCompletionGuard } from '@/lib/profile-completion-guard';
-import { HelpProvider } from '@/contexts/HelpContext';
+
 
 export default function PatientLayout({ children }: { children: React.ReactNode }) {
   const { user, userRole, loading } = useAuth();
@@ -33,8 +33,7 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
   }
 
   return (
-    <HelpProvider>
-      <ProfileCompletionGuard>
+    <ProfileCompletionGuard>
         <SidebarProvider defaultOpen>
         <div className="relative flex min-h-screen flex-col">
           <AppHeader className="dashboard-header" />
@@ -51,6 +50,5 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
           </div>
         </SidebarProvider>
       </ProfileCompletionGuard>
-    </HelpProvider>
   );
 }

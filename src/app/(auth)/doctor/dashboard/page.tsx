@@ -1,324 +1,337 @@
 "use client"
 import { useState } from 'react';
-import { StatCard } from '@/components/shared/stat-card';
+import { useRouter } from 'next/navigation';
+import { 
+  Users, 
+  Stethoscope, 
+  Clock, 
+  FileText, 
+  MessageCircle, 
+  Calendar, 
+  Bell, 
+  Settings, 
+  LogOut,
+  ChevronDown,
+  Menu,
+  X
+} from 'lucide-react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Users, Stethoscope, Clock, FileText, ArrowUpRight, MessageCircle, Calendar, Phone, MapPin, CheckCircle, Clock as ClockIcon, AlertCircle, X, Globe } from 'lucide-react';
-import Link from 'next/link';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
 
-// Mock WhatsApp appointments data (replace with actual data from your WhatsApp integration)
-const initialWhatsAppAppointments = [
-  {
-    id: 'WA001',
-    patientName: 'राजेश कुमार / Rajesh Kumar',
-    phoneNumber: '+91 98765 43210',
-    time: '10:30 AM',
-    date: '2024-01-15',
-    status: 'new',
-    reason: 'Follow-up consultation',
-    doctor: 'Dr. Verma',
-    clinic: 'Shanti Clinic',
-    address: 'Civil Lines, Nagpur',
-    language: 'hi'
-  },
-  {
-    id: 'WA002',
-    patientName: 'प्रिया शर्मा / Priya Sharma',
-    phoneNumber: '+91 87654 32109',
-    time: '11:00 AM',
-    date: '2024-01-15',
-    status: 'new',
-    reason: 'General checkup',
-    doctor: 'Dr. Verma',
-    clinic: 'Shanti Clinic',
-    address: 'Civil Lines, Nagpur',
-    language: 'hi'
-  },
-  {
-    id: 'WA003',
-    patientName: 'अमित पाटिल / Amit Patil',
-    phoneNumber: '+91 76543 21098',
-    time: '2:30 PM',
-    date: '2024-01-15',
-    status: 'confirmed',
-    reason: 'Chest pain consultation',
-    doctor: 'Dr. Verma',
-    clinic: 'Shanti Clinic',
-    address: 'Civil Lines, Nagpur',
-    language: 'mr'
-  },
-  {
-    id: 'WA004',
-    patientName: 'सुनीता देशमुख / Sunita Deshmukh',
-    phoneNumber: '+91 65432 10987',
-    time: '3:00 PM',
-    date: '2024-01-15',
-    status: 'new',
-    reason: 'Diabetes management',
-    doctor: 'Dr. Verma',
-    clinic: 'Shanti Clinic',
-    address: 'Civil Lines, Nagpur',
-    language: 'mr'
-  }
-];
+interface Appointment {
+  id: string;
+  patientName: string;
+  time: string;
+  date: string;
+  status: 'scheduled' | 'completed' | 'cancelled';
+  type: 'checkup' | 'followup' | 'consultation';
+  avatar: string;
+}
 
-const upcomingAppointments = [
-    { id: 'APT001', name: 'Demo Patient', time: '10:30 AM', avatar: 'DP', reason: 'Follow-up' },
-];
+interface Notification {
+  id: string;
+  title: string;
+  description: string;
+  time: string;
+  read: boolean;
+}
 
-const getStatusBadge = (status: string) => {
-  switch (status) {
-    case 'new':
-      return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100"><MessageCircle className="w-3 h-3 mr-1" />New</Badge>;
-    case 'confirmed':
-      return <Badge className="bg-green-100 text-green-800 hover:bg-green-100"><CheckCircle className="w-3 h-3 mr-1" />Confirmed</Badge>;
-    case 'pending':
-      return <Badge variant="secondary"><ClockIcon className="w-3 h-3 mr-1" />Pending</Badge>;
-    case 'cancelled':
-      return <Badge variant="destructive"><AlertCircle className="w-3 h-3 mr-1" />Cancelled</Badge>;
-    default:
-      return <Badge variant="outline">{status}</Badge>;
-  }
-};
+const DoctorDashboard = () => {
+  const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activeTab, setActiveTab] = useState('dashboard');
 
-const getLanguageLabel = (language: string) => {
-  switch (language) {
-    case 'hi':
-      return 'हिंदी';
-    case 'mr':
-      return 'मराठी';
-    case 'en':
-      return 'English';
-    default:
-      return language;
-  }
-};
+  // Mock data
+  const stats = [
+    { title: 'Today\'s Appointments', value: '8', icon: Stethoscope, change: '+2 from yesterday' },
+    { title: 'Total Patients', value: '142', icon: Users, change: '+12 this month' },
+    { title: 'Pending Tasks', value: '5', icon: FileText, change: '2 high priority' },
+    { title: 'Avg. Wait Time', value: '15 min', icon: Clock, change: '2 min faster' }
+  ];
 
-export default function DoctorDashboard() {
-  const [whatsappAppointments, setWhatsAppAppointments] = useState(initialWhatsAppAppointments);
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
-  const [filterStatus, setFilterStatus] = useState('all');
+  const upcomingAppointments: Appointment[] = [
+    { id: '1', patientName: 'Rahul Sharma', time: '10:30 AM', date: '2024-01-15', status: 'scheduled', type: 'consultation', avatar: 'RS' },
+    { id: '2', patientName: 'Priya Patel', time: '11:15 AM', date: '2024-01-15', status: 'scheduled', type: 'followup', avatar: 'PP' },
+    { id: '3', patientName: 'Amit Kumar', time: '02:00 PM', date: '2024-01-15', status: 'scheduled', type: 'checkup', avatar: 'AK' }
+  ];
 
-  const handleAcceptAppointment = (appointmentId: string) => {
-    setWhatsAppAppointments(prev => 
-      prev.map(apt => 
-        apt.id === appointmentId 
-          ? { ...apt, status: 'confirmed' as const }
-          : apt
-      )
-    );
+  const notifications: Notification[] = [
+    { id: '1', title: 'New Appointment', description: 'Rahul Sharma booked a consultation', time: '10 min ago', read: false },
+    { id: '2', title: 'Lab Results', description: 'Blood test results are ready', time: '1 hour ago', read: true },
+    { id: '3', title: 'Patient Message', description: 'Priya Patel sent you a message', time: '2 hours ago', read: true }
+  ];
+
+  const getStatusBadge = (status: string) => {
+    const statusMap: Record<string, { variant: string; label: string }> = {
+      scheduled: { variant: 'bg-blue-100 text-blue-800', label: 'Scheduled' },
+      completed: { variant: 'bg-green-100 text-green-800', label: 'Completed' },
+      cancelled: { variant: 'bg-red-100 text-red-800', label: 'Cancelled' }
+    };
+    const { variant, label } = statusMap[status] || { variant: 'bg-gray-100', label: status };
+    return <Badge className={variant}>{label}</Badge>;
   };
 
-  const handleRejectAppointment = (appointmentId: string) => {
-    setWhatsAppAppointments(prev => 
-      prev.map(apt => 
-        apt.id === appointmentId 
-          ? { ...apt, status: 'cancelled' as const }
-          : apt
-      )
-    );
+  const getTypeBadge = (type: string) => {
+    const typeMap: Record<string, string> = {
+      checkup: 'bg-purple-100 text-purple-800',
+      followup: 'bg-amber-100 text-amber-800',
+      consultation: 'bg-cyan-100 text-cyan-800'
+    };
+    return typeMap[type] || 'bg-gray-100';
   };
-
-  const filteredAppointments = filterStatus === 'all' 
-    ? whatsappAppointments 
-    : whatsappAppointments.filter(apt => apt.status === filterStatus);
-
-  const newAppointmentsCount = whatsappAppointments.filter(apt => apt.status === 'new').length;
-  const confirmedAppointmentsCount = whatsappAppointments.filter(apt => apt.status === 'confirmed').length;
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      {/* Language Selector */}
-      {/* <div className="flex justify-end">
-        <div className="flex items-center gap-2">
-          <Globe className="w-4 h-4 text-muted-foreground" />
-          <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="en">English</SelectItem>
-              <SelectItem value="hi">हिंदी</SelectItem>
-              <SelectItem value="mr">मराठी</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div> */}
+    <div className="flex h-screen bg-gray-50">
+      {/* Sidebar */}
+      <div 
+        className={cn(
+          "fixed inset-y-0 left-0 z-30 w-64 bg-white border-r transition-transform duration-300 ease-in-out",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full",
+          "md:relative md:translate-x-0"
+        )}
+      >
+        <div className="flex flex-col h-full">
+          <div className="p-4 border-b">
+            <h1 className="text-xl font-bold text-primary">HealthBridge</h1>
+            <p className="text-sm text-muted-foreground">Doctor Portal</p>
+          </div>
+          
+          <nav className="flex-1 p-4 space-y-2">
+            <Link href="#" className="flex items-center p-2 rounded-lg bg-blue-50 text-blue-600">
+              <Stethoscope className="w-5 h-5 mr-3" />
+              Dashboard
+            </Link>
+            <Link href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-100 text-gray-700">
+              <Users className="w-5 h-5 mr-3" />
+              Patients
+            </Link>
+            <Link href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-100 text-gray-700">
+              <Calendar className="w-5 h-5 mr-3" />
+              Appointments
+            </Link>
+            <Link href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-100 text-gray-700">
+              <MessageCircle className="w-5 h-5 mr-3" />
+              Messages
+            </Link>
+            <Link href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-100 text-gray-700">
+              <FileText className="w-5 h-5 mr-3" />
+              Reports
+            </Link>
+            <Link href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-100 text-gray-700">
+              <Settings className="w-5 h-5 mr-3" />
+              Settings
+            </Link>
+          </nav>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="New Appointments" value={newAppointmentsCount.toString()} icon={MessageCircle} description="Awaiting confirmation" />
-        <StatCard title="Confirmed Today" value={confirmedAppointmentsCount.toString()} icon={Stethoscope} description="Ready for consultation" />
-        <StatCard title="Total Patients" value="12" icon={Users} description="+3 this month"/>
-        <StatCard title="Avg. Consultation" value="25 min" icon={Clock} />
+          <div className="p-4 border-t">
+            <div className="flex items-center p-2 rounded-lg bg-gray-50">
+              <Avatar className="h-9 w-9">
+                <AvatarImage src="/placeholder-avatar.jpg" alt="Doctor" />
+                <AvatarFallback>DR</AvatarFallback>
+              </Avatar>
+              <div className="ml-3">
+                <p className="text-sm font-medium">Dr. Ananya Verma</p>
+                <p className="text-xs text-muted-foreground">Cardiologist</p>
+              </div>
+              <Button variant="ghost" size="icon" className="ml-auto">
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>New Appointments</CardTitle>
-                <CardDescription>Appointments from WhatsApp that need your attention</CardDescription>
-              </div>
-              <div className="flex items-center gap-2">
-                <Select value={filterStatus} onValueChange={setFilterStatus}>
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
-                    <SelectItem value="new">New</SelectItem>
-                    <SelectItem value="confirmed">Confirmed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button variant="outline" size="sm">
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  View All
+      <div className="flex flex-col flex-1 overflow-hidden">
+        {/* Top Navigation */}
+        <header className="bg-white border-b">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="md:hidden"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </Button>
+              <h1 className="ml-2 text-xl font-semibold">Dashboard</h1>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <Button variant="ghost" size="icon" className="relative">
+                  <Bell className="h-5 w-5" />
+                  <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
                 </Button>
               </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {filteredAppointments.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>No appointments found</p>
+              <div className="hidden md:flex items-center space-x-2">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src="/placeholder-avatar.jpg" alt="Doctor" />
+                  <AvatarFallback>DR</AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium">Dr. Ananya Verma</span>
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
               </div>
-            ) : (
-              filteredAppointments.map((apt) => (
-                <div key={apt.id} className={`flex items-center gap-4 p-4 border rounded-lg transition-colors ${
-                  apt.status === 'new' ? 'bg-blue-50 border-blue-200' : 
-                  apt.status === 'confirmed' ? 'bg-green-50 border-green-200' :
-                  apt.status === 'cancelled' ? 'bg-red-50 border-red-200' :
-                  'hover:bg-muted/50'
-                }`}>
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src={`https://placehold.co/48x48.png?text=${apt.patientName.split(' ')[0][0]}`} alt={apt.patientName} />
-                    <AvatarFallback>{apt.patientName.split(' ')[0][0]}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <p className="text-sm font-medium leading-none truncate">{apt.patientName}</p>
-                      {getStatusBadge(apt.status)}
-                      <Badge variant="outline" className="text-xs">{getLanguageLabel(apt.language)}</Badge>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {apt.time}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Phone className="w-3 h-3" />
-                        {apt.phoneNumber}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
-                        {apt.clinic}
-                      </div>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">{apt.reason}</p>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    {apt.status === 'new' && (
-                      <>
-                        <Button 
-                          size="sm" 
-                          className="bg-green-600 hover:bg-green-700 text-white"
-                          onClick={() => handleAcceptAppointment(apt.id)}
-                        >
-                          <CheckCircle className="w-3 h-3 mr-1" />
-                          Accept
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="destructive"
-                          onClick={() => handleRejectAppointment(apt.id)}
-                        >
-                          <X className="w-3 h-3 mr-1" />
-                          Reject
-                        </Button>
-                      </>
-                    )}
-                    {apt.status === 'confirmed' && (
-                      <Button size="sm" variant="outline">
-                        <MessageCircle className="w-3 h-3 mr-1" />
-                        Message
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              ))
-            )}
-          </CardContent>
-          <CardFooter>
-            <Button asChild className="w-full">
-              <Link href="/doctor/appointments">View All Appointments <ArrowUpRight className="ml-2 h-4 w-4"/></Link>
-            </Button>
-          </CardFooter>
-        </Card>
+            </div>
+          </div>
+        </header>
 
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Today's Schedule</CardTitle>
-              <CardDescription>Your upcoming appointments for today.</CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              {upcomingAppointments.map((apt) => (
-                  <div key={apt.id} className="flex items-center gap-4">
-                      <Avatar className="h-11 w-11">
-                          <AvatarImage src={`https://placehold.co/44x44.png?text=${apt.avatar}`} alt={apt.name} data-ai-hint="person portrait" />
-                          <AvatarFallback>{apt.avatar}</AvatarFallback>
-                      </Avatar>
-                      <div className="grid gap-1">
-                          <p className="text-sm font-medium leading-none">{apt.name}</p>
-                          <p className="text-sm text-muted-foreground">{apt.time} - {apt.reason}</p>
-                      </div>
-                      <Button asChild variant="ghost" size="sm" className="ml-auto">
-                          <Link href="#">View</Link>
-                      </Button>
-                  </div>
-              ))}
-            </CardContent>
-            <CardFooter>
-              <Button asChild className="w-full">
-                <Link href="/doctor/appointments">View All Appointments <ArrowUpRight className="ml-2 h-4 w-4"/></Link>
-              </Button>
-            </CardFooter>
-          </Card>
+        {/* Main Content */}
+        <main className="flex-1 overflow-auto p-4 md:p-6">
+          {/* Stats Grid */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+            {stats.map((stat, index) => (
+              <Card key={index} className="hover:shadow-md transition-shadow">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    {stat.title}
+                  </CardTitle>
+                  <stat.icon className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stat.value}</div>
+                  <p className="text-xs text-muted-foreground">{stat.change}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-              <CardDescription>Common tasks for today</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button variant="outline" className="w-full justify-start" asChild>
-                <Link href="/doctor/availability">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Update Availability
-                </Link>
-              </Button>
-              <Button variant="outline" className="w-full justify-start" asChild>
-                <Link href="/doctor/patients">
-                  <Users className="w-4 h-4 mr-2" />
-                  View Patients
-                </Link>
-              </Button>
-              <Button variant="outline" className="w-full justify-start" asChild>
-                <Link href="/doctor/whatsapp">
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  WhatsApp Dashboard
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+          {/* Main Content Area */}
+          <div className="grid gap-6 md:grid-cols-3">
+            {/* Upcoming Appointments */}
+            <div className="md:col-span-2 space-y-6">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle>Upcoming Appointments</CardTitle>
+                      <CardDescription>Your schedule for today</CardDescription>
+                    </div>
+                    <Button variant="outline" size="sm">View All</Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {upcomingAppointments.map((appointment) => (
+                      <div 
+                        key={appointment.id} 
+                        className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        <Avatar className="h-10 w-10">
+                          <AvatarFallback>{appointment.avatar}</AvatarFallback>
+                        </Avatar>
+                        <div className="ml-4 flex-1">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-medium">{appointment.patientName}</h4>
+                            <span className="text-sm text-muted-foreground">{appointment.time}</span>
+                          </div>
+                          <div className="flex items-center mt-1 space-x-2">
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${getTypeBadge(appointment.type)}`}>
+                              {appointment.type}
+                            </span>
+                            {getStatusBadge(appointment.status)}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Recent Patients */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Patients</CardTitle>
+                  <CardDescription>Recently added to your practice</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex items-center p-3 rounded-lg hover:bg-gray-50">
+                        <Avatar className="h-9 w-9">
+                          <AvatarFallback>P{i}</AvatarFallback>
+                        </Avatar>
+                        <div className="ml-4">
+                          <p className="text-sm font-medium">Patient {i}</p>
+                          <p className="text-xs text-muted-foreground">Last visit: {i} day{i > 1 ? 's' : ''} ago</p>
+                        </div>
+                        <Button variant="outline" size="sm" className="ml-auto">View</Button>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Sidebar */}
+            <div className="space-y-6">
+              {/* Notifications */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Notifications</CardTitle>
+                  <CardDescription>Recent updates and alerts</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {notifications.map((notification) => (
+                      <div 
+                        key={notification.id} 
+                        className={cn(
+                          "p-3 rounded-lg",
+                          !notification.read && "bg-blue-50"
+                        )}
+                      >
+                        <div className="flex items-start">
+                          <div className="flex-shrink-0 pt-0.5">
+                            <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+                          </div>
+                          <div className="ml-3 flex-1">
+                            <p className="text-sm font-medium">{notification.title}</p>
+                            <p className="text-sm text-muted-foreground">{notification.description}</p>
+                            <p className="text-xs text-muted-foreground mt-1">{notification.time}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quick Actions */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Quick Actions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <Button variant="outline" className="w-full justify-start">
+                      <Calendar className="mr-2 h-4 w-4" />
+                      New Appointment
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start">
+                      <FileText className="mr-2 h-4 w-4" />
+                      Write Prescription
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start">
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      Message Patient
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   );
-}
+};
+
+export default DoctorDashboard;

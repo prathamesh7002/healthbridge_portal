@@ -26,8 +26,6 @@
 # Next.js plugin configuration
 [[plugins]]
   package = "@netlify/plugin-nextjs"
-  [plugins.inputs]
-    experimental = { appDir = true }  # Enable App Router features
 
 # Edge Functions configuration
 [[edge_functions]]

@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Turbopack configuration
+  turbopack: {
+    // Add any Turbopack specific configurations here
+  },
 
   images: {
     remotePatterns: [
