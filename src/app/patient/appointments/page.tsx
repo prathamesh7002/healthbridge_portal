@@ -1,4 +1,5 @@
 "use client";
+import React from 'react';
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -46,6 +47,12 @@ const doctors = {
 const availableTimes = ['09:00 AM', '10:00 AM', '11:00 AM', '02:00 PM', '03:00 PM', '04:00 PM'];
 
 export default function BookAppointmentPage() {
+  // Always scroll to top on mount
+  React.useEffect(() => {
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
+  }, []);
   const { toast } = useToast();
   const [selectedSpec, setSelectedSpec] = useState<keyof typeof doctors | null>(null);
   const [waConsent, setWaConsent] = useState(false);
