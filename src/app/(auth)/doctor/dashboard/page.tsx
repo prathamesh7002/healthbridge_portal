@@ -89,95 +89,25 @@ const DoctorDashboard = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      <div 
-        className={cn(
-          "fixed inset-y-0 left-0 z-30 w-64 bg-white border-r transition-transform duration-300 ease-in-out",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full",
-          "md:relative md:translate-x-0"
-        )}
-      >
-        <div className="flex flex-col h-full">
-          <div className="p-4 border-b">
-            <h1 className="text-xl font-bold text-primary">HealthBridge</h1>
-            <p className="text-sm text-muted-foreground">Doctor Portal</p>
-          </div>
-          
-          <nav className="flex-1 p-4 space-y-2">
-            <Link href="#" className="flex items-center p-2 rounded-lg bg-blue-50 text-blue-600">
-              <Stethoscope className="w-5 h-5 mr-3" />
-              Dashboard
-            </Link>
-            <Link href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-100 text-gray-700">
-              <Users className="w-5 h-5 mr-3" />
-              Patients
-            </Link>
-            <Link href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-100 text-gray-700">
-              <Calendar className="w-5 h-5 mr-3" />
-              Appointments
-            </Link>
-            <Link href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-100 text-gray-700">
-              <MessageCircle className="w-5 h-5 mr-3" />
-              Messages
-            </Link>
-            <Link href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-100 text-gray-700">
-              <FileText className="w-5 h-5 mr-3" />
-              Reports
-            </Link>
-            <Link href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-100 text-gray-700">
-              <Settings className="w-5 h-5 mr-3" />
-              Settings
-            </Link>
-          </nav>
-
-          <div className="p-4 border-t">
-            <div className="flex items-center p-2 rounded-lg bg-gray-50">
-              <Avatar className="h-9 w-9">
-                <AvatarImage src="/placeholder-avatar.jpg" alt="Doctor" />
-                <AvatarFallback>DR</AvatarFallback>
-              </Avatar>
-              <div className="ml-3">
-                <p className="text-sm font-medium">Dr. Ananya Verma</p>
-                <p className="text-xs text-muted-foreground">Cardiologist</p>
-              </div>
-              <Button variant="ghost" size="icon" className="ml-auto">
-                <LogOut className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top Navigation */}
         <header className="bg-white border-b">
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="md:hidden"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-              >
-                {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
-              <h1 className="ml-2 text-xl font-semibold">Dashboard</h1>
+              <h1 className="text-xl font-semibold">Dashboard</h1>
             </div>
             
             <div className="flex items-center space-x-4">
-              <div className="relative">
+              <div className="flex items-center space-x-2">
                 <Button variant="ghost" size="icon" className="relative">
                   <Bell className="h-5 w-5" />
                   <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
                 </Button>
-              </div>
-              <div className="hidden md:flex items-center space-x-2">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="/placeholder-avatar.jpg" alt="Doctor" />
                   <AvatarFallback>DR</AvatarFallback>
                 </Avatar>
-                <span className="text-sm font-medium">Dr. Ananya Verma</span>
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
               </div>
             </div>
           </div>
