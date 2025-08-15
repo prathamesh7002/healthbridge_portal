@@ -16,9 +16,17 @@ export default async function middleware(request) {
     }
 
     // Handle locale detection and redirection
-    const locale = request.cookies.get('NEXT_LOCALE')?.value || 'en';
-    const pathLocale = ['en', 'hi', 'mr'].find(locale => 
-      pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+    const cookieHeader = request.headers.get('cookie') || '';
+    const cookies = Object.fromEntries(
+      cookieHeader.split(';').map(c => {
+        const [key, ...values] = c.trim().split('=');
+        return [key, values.join('=')];
+      })
+    );
+    
+    const locale = cookies.NEXT_LOCALE || 'en';
+    const pathLocale = ['en', 'hi', 'mr'].find(loc => 
+      pathname.startsWith(`/${loc}/`) || pathname === `/${loc}`
     );
 
     // If no locale in path, redirect to include locale
