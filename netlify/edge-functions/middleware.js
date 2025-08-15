@@ -1,6 +1,4 @@
 // This file is used by Netlify Edge Functions
-import { NextResponse } from 'next/server';
-
 export default async function middleware(request) {
   try {
     const url = new URL(request.url);
@@ -14,30 +12,36 @@ export default async function middleware(request) {
       pathname.includes('.') ||
       pathname.includes('__next')
     ) {
-      return NextResponse.next();
+      return new Response(null, { status: 200 });
     }
 
     // Handle locale detection and redirection
-    const locale = request.cookies.get('NEXT_LOCALE')?.value || 'en';
-    const pathLocale = ['en', 'hi', 'mr'].find(locale => 
-      pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+    const cookieHeader = request.headers.get('cookie') || '';
+    const cookies = Object.fromEntries(
+      cookieHeader.split(';').map(c => {
+        const [key, ...values] = c.trim().split('=');
+        return [key, values.join('=')];
+      })
+    );
+    
+    const locale = cookies.NEXT_LOCALE || 'en';
+    const pathLocale = ['en', 'hi', 'mr'].find(loc => 
+      pathname.startsWith(`/${loc}/`) || pathname === `/${loc}`
     );
 
     // If no locale in path, redirect to include locale
     if (!pathLocale) {
       const newUrl = new URL(`/${locale}${pathname}`, request.url);
-      return NextResponse.redirect(newUrl);
+      return Response.redirect(newUrl, 307);
     }
 
-    return NextResponse.next();
+    return new Response(null, { status: 200 });
   } catch (error) {
     console.error('Edge Function error:', error);
-    return NextResponse.next();
+    return new Response('Internal Server Error', { status: 500 });
   }
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|api|images|fonts|_vercel|.*\..*).*)',
-  ],
+  path: '/*',
 };
